@@ -18,5 +18,15 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 		return err
 	}
 	log.Info("Smelly received", smelly)
+	pods, deployments, statefulsets, daemonset, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
+	if err != nil {
+		return c.JSON(
+			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
+		)
+	}
+	log.Info("Pods", pods)
+	log.Info("Deployments", deployments)
+	log.Info("StatefulSets", statefulsets)
+	log.Info("DaemonSets", daemonset)
 	return nil
 }
