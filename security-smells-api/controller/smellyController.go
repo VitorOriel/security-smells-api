@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
+	"security-smells-api/models"
 	"security-smells-api/service"
 )
 
@@ -11,6 +12,11 @@ type SmellyController struct {
 }
 
 func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
-	fmt.Println("Executing smelly controller")
+	log.Info("Executing smelly controller")
+	smelly := new(models.Smelly)
+	if err := c.BodyParser(smelly); err != nil {
+		return err
+	}
+	log.Info("Smelly received", smelly)
 	return nil
 }
