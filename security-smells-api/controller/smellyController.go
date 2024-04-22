@@ -28,5 +28,12 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	log.Info("Deployments", deployments)
 	log.Info("StatefulSets", statefulsets)
 	log.Info("DaemonSets", daemonset)
-	return nil
+
+	smells := smellyController.SmellyService.FindDeploymentSmell(deployments)
+	smellyResponseDTO := models.SmellyResponseDTO{
+		TotalOfSmells:    len(smells),
+		SmellsDeployment: smells,
+		Suggestions:      nil,
+	}
+	return c.JSON(smellyResponseDTO)
 }

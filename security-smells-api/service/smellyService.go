@@ -6,13 +6,27 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
+	"security-smells-api/models"
 	"security-smells-api/repository"
-
+	"security-smells-api/service/implementation"
 	"strings"
 )
 
 type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
+}
+
+func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellDeployment) {
+	smells = []models.SmellDeployment{}
+	for _, deployment := range deployments {
+		d := &implementation.Deployment{
+			Deployment: &deployment,
+		}
+		d.SmellyResourceAndLimit()
+		smells = append(smells, d.SmellDeployment...)
+	}
+
+	return smells
 }
 
 func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, err error) {
@@ -65,10 +79,6 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			daemonSetSlices = append(daemonSetSlices, *ds)
 		}
 	}
-	log.Info("Pods size:", len(podSlices))
-	log.Info("Deployments size:", len(deploymentSlices))
-	log.Info("StatefulSets size:", len(statefulSetSlices))
-	log.Info("DaemonSets size:", len(daemonSetSlices))
 	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
 		return nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
