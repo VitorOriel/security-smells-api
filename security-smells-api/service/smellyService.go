@@ -28,9 +28,24 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
 		smells = append(smells, d.SmellDeployment...)
-		//smells = append(smells, d.SmellDeployment...)
 	}
 
+	return smells
+}
+
+func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []models.SmellPod) {
+	smells = []models.SmellPod{}
+	for _, pod := range pods {
+		p := &implementation.Pod{
+			Pod: &pod,
+		}
+		p.SmellyResourceAndLimit()
+		p.SmellySecurityContextRunAsUser()
+		p.SmellySecurityContextCapabilities()
+		p.SmellySecurityContextAllowPrivilegeEscalation()
+		p.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, p.SmellPod...)
+	}
 	return smells
 }
 
