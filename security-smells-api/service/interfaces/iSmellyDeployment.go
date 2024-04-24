@@ -2,7 +2,10 @@ package interfaces
 
 type ISmellyDeployment interface {
 	SmellyResourceAndLimit()
-	SmellySecurityContext()
+	SmellySecurityContextRunAsUser()
+	SmellySecurityContextCapabilities()
+	SmellySecurityContextAllowPrivilegeEscalation()
+	SmellySecurityContextReadOnlyRootFilesystem()
 }
 
 type SmellyDeployment struct {
@@ -11,5 +14,8 @@ type SmellyDeployment struct {
 
 func (smellyDeployment *SmellyDeployment) checkSmellyDeployment() {
 	smellyDeployment.ISmellyDeployment.SmellyResourceAndLimit()
-	smellyDeployment.ISmellyDeployment.SmellySecurityContext()
+	smellyDeployment.ISmellyDeployment.SmellySecurityContextRunAsUser()
+	smellyDeployment.ISmellyDeployment.SmellySecurityContextCapabilities()
+	smellyDeployment.ISmellyDeployment.SmellySecurityContextAllowPrivilegeEscalation()
+	smellyDeployment.ISmellyDeployment.SmellySecurityContextReadOnlyRootFilesystem()
 }

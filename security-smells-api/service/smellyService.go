@@ -23,7 +23,12 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 			Deployment: &deployment,
 		}
 		d.SmellyResourceAndLimit()
+		d.SmellySecurityContextRunAsUser()
+		d.SmellySecurityContextCapabilities()
+		d.SmellySecurityContextAllowPrivilegeEscalation()
+		d.SmellySecurityContextReadOnlyRootFilesystem()
 		smells = append(smells, d.SmellDeployment...)
+		//smells = append(smells, d.SmellDeployment...)
 	}
 
 	return smells
