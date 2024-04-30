@@ -2,14 +2,16 @@ package service
 
 import (
 	"errors"
-	"github.com/gofiber/fiber/v2/log"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/client-go/kubernetes/scheme"
 	"security-smells-api/models"
 	"security-smells-api/repository"
 	"security-smells-api/service/implementation"
 	"strings"
+
+	"github.com/gofiber/fiber/v2/log"
+	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes/scheme"
 )
 
 type SmellyService struct {
@@ -49,12 +51,29 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []mod
 	return smells
 }
 
-func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, err error) {
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellPod) {
+	smells = []models.SmellJob{}
+	for _, job := range jobs {
+		j := &implementation.Job{
+			Job: &job,
+		}
+		j.SmellyResourceAndLimit()
+		j.SmellySecurityContextRunAsUser()
+		j.SmellySecurityContextCapabilities()
+		j.SmellySecurityContextAllowPrivilegeEscalation()
+		j.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, j.SmellJob...)
+	}
+	return smells
+}
+
+func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, err error) {
 	log.Info("Executing smelly service")
 	var podSlices []corev1.Pod
 	var deploymentSlices []appsv1.Deployment
 	var statefulSetSlices []appsv1.StatefulSet
 	var daemonSetSlices []appsv1.DaemonSet
+	var jobSlices []batchv1.Job
 
 	decode := scheme.Codecs.UniversalDeserializer().Decode
 	for _, spec := range strings.Split(manifestToFindSmells, "---") {
@@ -97,11 +116,20 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("GVK:", ds.GroupVersionKind())
 			log.Info("---")
 			daemonSetSlices = append(daemonSetSlices, *ds)
+
+		case *batchv1.Job:
+			jobs := obj.(*corev1.Pod)
+			log.Info("Name:", jobs.GetName())
+			log.Info("Namespace:", jobs.GetNamespace())
+			log.Info("Kind:", jobs.GetResourceVersion())
+			log.Info("---")
+			jobSlices = append(podSlices, *jobs)
 		}
+
 	}
 	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
-		return nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
+		return nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
 	}
-	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, nil
+	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, nil
 }

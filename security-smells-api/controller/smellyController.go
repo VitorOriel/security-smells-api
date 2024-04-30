@@ -1,10 +1,11 @@
 package controller
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 	"security-smells-api/models"
 	"security-smells-api/service"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 )
 
 type SmellyController struct {
@@ -18,7 +19,7 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 		return err
 	}
 	log.Info("Smelly received", smelly)
-	pods, deployments, statefulsets, daemonset, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
+	pods, deployments, statefulsets, daemonset, jobs, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
 	if err != nil {
 		return c.JSON(
 			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
@@ -28,13 +29,16 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	log.Info("Deployments", deployments)
 	log.Info("StatefulSets", statefulsets)
 	log.Info("DaemonSets", daemonset)
+	log.Info("Jobs", jobs)
 
 	smells := smellyController.SmellyService.FindDeploymentSmell(deployments)
 	smellsPod := smellyController.SmellyService.FindPodSmell(pods)
+	smellsJob := smellyController.SmellyService.FindJobSmell(jobs)
 	smellyResponseDTO := models.SmellyResponseDTO{
 		TotalOfSmells:    len(smells) + len(smellsPod),
 		SmellsDeployment: smells,
 		SmellsPod:        smellsPod,
+		SmellsJob:        smellsJob,
 	}
 	return c.JSON(smellyResponseDTO)
 }
