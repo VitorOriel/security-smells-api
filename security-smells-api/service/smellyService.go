@@ -51,7 +51,7 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []mod
 	return smells
 }
 
-func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellPod) {
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellJob) {
 	smells = []models.SmellJob{}
 	for _, job := range jobs {
 		j := &implementation.Job{
@@ -67,13 +67,30 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []mo
 	return smells
 }
 
-func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, err error) {
+func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) (smells []models.SmellCronJob) {
+	smells = []models.SmellCronJob{}
+	for _, cronJob := range cronJobs {
+		c := &implementation.CronJob{
+			CronJob: &cronJob,
+		}
+		c.SmellyResourceAndLimit()
+		c.SmellySecurityContextRunAsUser()
+		c.SmellySecurityContextCapabilities()
+		c.SmellySecurityContextAllowPrivilegeEscalation()
+		c.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, c.SmellCronJob...)
+	}
+	return smells
+}
+
+func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, cronJobs []batchv1.CronJob, err error) {
 	log.Info("Executing smelly service")
 	var podSlices []corev1.Pod
 	var deploymentSlices []appsv1.Deployment
 	var statefulSetSlices []appsv1.StatefulSet
 	var daemonSetSlices []appsv1.DaemonSet
 	var jobSlices []batchv1.Job
+	var cronJobSlices []batchv1.CronJob
 
 	decode := scheme.Codecs.UniversalDeserializer().Decode
 	for _, spec := range strings.Split(manifestToFindSmells, "---") {
@@ -116,20 +133,26 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("GVK:", ds.GroupVersionKind())
 			log.Info("---")
 			daemonSetSlices = append(daemonSetSlices, *ds)
-
 		case *batchv1.Job:
-			jobs := obj.(*corev1.Pod)
-			log.Info("Name:", jobs.GetName())
-			log.Info("Namespace:", jobs.GetNamespace())
-			log.Info("Kind:", jobs.GetResourceVersion())
+			job := obj.(*batchv1.Job)
+			log.Info("Name:", job.GetName())
+			log.Info("Namespace:", job.GetNamespace())
+			log.Info("Kind:", job.GetResourceVersion())
 			log.Info("---")
-			jobSlices = append(podSlices, *jobs)
+			jobSlices = append(jobSlices, *job)
+		case *batchv1.CronJob:
+			cronJob := obj.(*batchv1.CronJob)
+			log.Info("Name:", cronJob.GetName())
+			log.Info("Namespace:", cronJob.GetNamespace())
+			log.Info("Kind:", cronJob.GetResourceVersion())
+			log.Info("---")
+			cronJobSlices = append(cronJobSlices, *cronJob)
 		}
-
+		}
 	}
-	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 {
+	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 || len(jobSlices) == 0 || len(cronJobSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
 		return nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
 	}
-	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, nil
+	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, cronJobSlices, nil
 }

@@ -5,4 +5,5 @@ type SmellyResponseDTO struct {
 	SmellsDeployment []SmellDeployment `json:"smellsDeployment"`
 	SmellsPod        []SmellPod        `json:"smellsPod"`
 	SmellsJob        []SmellJob        `json:"smellsJob"`
+	SmellsCronJob    []SmellCronJob    `json:"smellsCronJob"`
 }
