@@ -1,7 +1,5 @@
 package interfaces
 
-package interfaces
-
 type ISmellyCronJob interface {
 	SmellyResourceAndLimit()
 	SmellySecurityContextRunAsUser()

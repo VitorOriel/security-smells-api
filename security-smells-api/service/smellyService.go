@@ -117,7 +117,6 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("Containers IMAGEMS", d.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
 			deploymentSlices = append(deploymentSlices, *d)
-
 		case *appsv1.StatefulSet:
 			ss := obj.(*appsv1.StatefulSet)
 			log.Info("Name:", ss.GetName())
@@ -125,7 +124,6 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("GVK:", ss.GroupVersionKind())
 			log.Info("---")
 			statefulSetSlices = append(statefulSetSlices, *ss)
-
 		case *appsv1.DaemonSet:
 			ds := obj.(*appsv1.DaemonSet)
 			log.Info("Name:", ds.GetName())
@@ -148,11 +146,10 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("---")
 			cronJobSlices = append(cronJobSlices, *cronJob)
 		}
-		}
 	}
 	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 || len(jobSlices) == 0 || len(cronJobSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
-		return nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
+		return nil, nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
 	}
 	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, cronJobSlices, nil
 }
