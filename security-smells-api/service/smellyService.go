@@ -18,6 +18,22 @@ type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
 }
 
+func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet) (smells []models.SmellReplicaSet) {
+	smells = []models.SmellReplicaSet{}
+	for _, replicaSet := range replicaSets {
+		r := &implementation.ReplicaSet{
+			ReplicaSet: &replicaSet,
+		}
+		r.SmellyResourceAndLimit()
+		r.SmellySecurityContextRunAsUser()
+		r.SmellySecurityContextCapabilities()
+		r.SmellySecurityContextAllowPrivilegeEscalation()
+		r.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, r.SmellReplicaSet...)
+	}
+	return smells
+}
+
 func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellDeployment) {
 	smells = []models.SmellDeployment{}
 	for _, deployment := range deployments {
@@ -83,9 +99,10 @@ func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) 
 	return smells
 }
 
-func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, cronJobs []batchv1.CronJob, err error) {
+func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, replicaSets []appsv1.ReplicaSet, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, cronJobs []batchv1.CronJob, err error) {
 	log.Info("Executing smelly service")
 	var podSlices []corev1.Pod
+	var replicaSetSlices []appsv1.ReplicaSet
 	var deploymentSlices []appsv1.Deployment
 	var statefulSetSlices []appsv1.StatefulSet
 	var daemonSetSlices []appsv1.DaemonSet
@@ -109,6 +126,14 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("Kind:", pods.GetResourceVersion())
 			log.Info("---")
 			podSlices = append(podSlices, *pods)
+		case *appsv1.ReplicaSet:
+			r := obj.(*appsv1.ReplicaSet)
+			log.Info("Name:", r.GetName())
+			log.Info("Namespace:", r.GetNamespace())
+			log.Info("GVK:", r.GroupVersionKind())
+			log.Info("Containers IMAGEMS", r.Spec.Template.Spec.Containers[0].Image)
+			log.Info("---")
+			replicaSetSlices = append(replicaSetSlices, *r)
 		case *appsv1.Deployment:
 			d := obj.(*appsv1.Deployment)
 			log.Info("Name:", d.GetName())
@@ -149,7 +174,7 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 	}
 	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 || len(jobSlices) == 0 || len(cronJobSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
-		return nil, nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
+		return nil, nil, nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
 	}
-	return podSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, cronJobSlices, nil
+	return podSlices, replicaSetSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, cronJobSlices, nil
 }

@@ -19,27 +19,30 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 		return err
 	}
 	log.Info("Smelly received", smelly)
-	pods, deployments, statefulsets, daemonset, jobs, cronJobs, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
+	pods, replicaSets, deployments, statefulsets, daemonset, jobs, cronJobs, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
 	if err != nil {
 		return c.JSON(
 			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
 		)
 	}
 	log.Info("Pods", pods)
+	log.Info("ReplicaSets", replicaSets)
 	log.Info("Deployments", deployments)
 	log.Info("StatefulSets", statefulsets)
 	log.Info("DaemonSets", daemonset)
 	log.Info("Jobs", jobs)
 	log.Info("CronJobs", cronJobs)
 
-	smells := smellyController.SmellyService.FindDeploymentSmell(deployments)
 	smellsPod := smellyController.SmellyService.FindPodSmell(pods)
+	smellsReplicaSet := smellyController.SmellyService.FindReplicaSetSmell(replicaSets)
+	smellsDeployment := smellyController.SmellyService.FindDeploymentSmell(deployments)
 	smellsJob := smellyController.SmellyService.FindJobSmell(jobs)
 	smellsCronJob := smellyController.SmellyService.FindCronJobSmell(cronJobs)
 	smellyResponseDTO := models.SmellyResponseDTO{
-		TotalOfSmells:    len(smells) + len(smellsPod) + len(smellsJob) + len(smellsCronJob),
-		SmellsDeployment: smells,
+		TotalOfSmells:    len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob),
 		SmellsPod:        smellsPod,
+		SmellsReplicaSet: smellsReplicaSet,
+		SmellsDeployment: smellsDeployment,
 		SmellsJob:        smellsJob,
 		SmellsCronJob:    smellsCronJob,
 	}
