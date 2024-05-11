@@ -141,8 +141,3 @@ func (deployment *Deployment) SmellyResourceAndLimit() {
 		}
 	}
 }
-
-func (deployment *Deployment) SmellySecurityContext() {
-	//TODO implement me
-	panic("implement me")
-}

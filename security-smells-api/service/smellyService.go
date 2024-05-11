@@ -34,6 +34,38 @@ func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.Repl
 	return smells
 }
 
+func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet) (smells []models.SmellDaemonSet) {
+	smells = []models.SmellDaemonSet{}
+	for _, daemonSet := range daemonSets {
+		d := &implementation.DaemonSet{
+			DaemonSet: &daemonSet,
+		}
+		d.SmellyResourceAndLimit()
+		d.SmellySecurityContextRunAsUser()
+		d.SmellySecurityContextCapabilities()
+		d.SmellySecurityContextAllowPrivilegeEscalation()
+		d.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, d.SmellDaemonSet...)
+	}
+	return smells
+}
+
+func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet) (smells []models.SmellStatefulSet) {
+	smells = []models.SmellStatefulSet{}
+	for _, statefulSet := range statefulSets {
+		s := &implementation.StatefulSet{
+			StatefulSet: &statefulSet,
+		}
+		s.SmellyResourceAndLimit()
+		s.SmellySecurityContextRunAsUser()
+		s.SmellySecurityContextCapabilities()
+		s.SmellySecurityContextAllowPrivilegeEscalation()
+		s.SmellySecurityContextReadOnlyRootFilesystem()
+		smells = append(smells, s.SmellStatefulSet...)
+	}
+	return smells
+}
+
 func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellDeployment) {
 	smells = []models.SmellDeployment{}
 	for _, deployment := range deployments {
@@ -172,7 +204,7 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			cronJobSlices = append(cronJobSlices, *cronJob)
 		}
 	}
-	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 || len(jobSlices) == 0 || len(cronJobSlices) == 0 {
+	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 && len(jobSlices) == 0 && len(cronJobSlices) == 0 {
 		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
 		return nil, nil, nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
 	}

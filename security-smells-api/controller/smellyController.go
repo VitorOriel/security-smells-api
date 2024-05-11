@@ -38,13 +38,17 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	smellsDeployment := smellyController.SmellyService.FindDeploymentSmell(deployments)
 	smellsJob := smellyController.SmellyService.FindJobSmell(jobs)
 	smellsCronJob := smellyController.SmellyService.FindCronJobSmell(cronJobs)
+	smellsStatefulSet := smellyController.SmellyService.FindStatefulSetSmell(statefulsets)
+	smellsDaemonSet := smellyController.SmellyService.FindDaemonSetSmell(daemonset)
 	smellyResponseDTO := models.SmellyResponseDTO{
-		TotalOfSmells:    len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob),
-		SmellsPod:        smellsPod,
-		SmellsReplicaSet: smellsReplicaSet,
-		SmellsDeployment: smellsDeployment,
-		SmellsJob:        smellsJob,
-		SmellsCronJob:    smellsCronJob,
+		TotalOfSmells:     len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob),
+		SmellsPod:         smellsPod,
+		SmellsReplicaSet:  smellsReplicaSet,
+		SmellsDeployment:  smellsDeployment,
+		SmellsJob:         smellsJob,
+		SmellsCronJob:     smellsCronJob,
+		SmellsStatefulSet: smellsStatefulSet,
+		SmellDemonSet:     smellsDaemonSet,
 	}
 	return c.JSON(smellyResponseDTO)
 }
