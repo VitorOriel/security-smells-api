@@ -1,7 +1,10 @@
 package models
 
-type SmellyResponseDTO struct {
-	TotalOfSmells     int                `json:"totalOfSmells"`
+type Meta struct {
+	TotalOfSmells int `json:"totalOfSmells"`
+}
+
+type Data struct {
 	SmellsReplicaSet  []SmellReplicaSet  `json:"smellsReplicaSet"`
 	SmellsDeployment  []SmellDeployment  `json:"smellsDeployment"`
 	SmellsPod         []SmellPod         `json:"smellsPod"`
@@ -9,4 +12,9 @@ type SmellyResponseDTO struct {
 	SmellsCronJob     []SmellCronJob     `json:"smellsCronJob"`
 	SmellsStatefulSet []SmellStatefulSet `json:"smellsStatefulSet"`
 	SmellDemonSet     []SmellDaemonSet   `json:"smellDemonSet"`
+}
+
+type SmellyResponseDTO struct {
+	Meta Meta `json:"meta"`
+	Data Data `json:"data"`
 }
