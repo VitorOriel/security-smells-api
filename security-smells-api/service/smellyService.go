@@ -18,8 +18,8 @@ type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
 }
 
-func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet) (smells []models.SmellReplicaSet) {
-	smells = []models.SmellReplicaSet{}
+func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, replicaSet := range replicaSets {
 		r := &implementation.ReplicaSet{
 			ReplicaSet: &replicaSet,
@@ -29,13 +29,13 @@ func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.Repl
 		r.SmellySecurityContextCapabilities()
 		r.SmellySecurityContextAllowPrivilegeEscalation()
 		r.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, r.SmellReplicaSet...)
+		smells = append(smells, r.SmellKubernetes...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet) (smells []models.SmellDaemonSet) {
-	smells = []models.SmellDaemonSet{}
+func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, daemonSet := range daemonSets {
 		d := &implementation.DaemonSet{
 			DaemonSet: &daemonSet,
@@ -45,13 +45,13 @@ func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.Daemon
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, d.SmellDaemonSet...)
+		smells = append(smells, d.SmellKubernetes...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet) (smells []models.SmellStatefulSet) {
-	smells = []models.SmellStatefulSet{}
+func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, statefulSet := range statefulSets {
 		s := &implementation.StatefulSet{
 			StatefulSet: &statefulSet,
@@ -61,13 +61,13 @@ func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.St
 		s.SmellySecurityContextCapabilities()
 		s.SmellySecurityContextAllowPrivilegeEscalation()
 		s.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, s.SmellStatefulSet...)
+		smells = append(smells, s.SmellKubernetes...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellDeployment) {
-	smells = []models.SmellDeployment{}
+func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, deployment := range deployments {
 		d := &implementation.Deployment{
 			Deployment: &deployment,
@@ -77,14 +77,14 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, d.SmellDeployment...)
+		smells = append(smells, d.SmellKubernetes...)
 	}
 
 	return smells
 }
 
-func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []models.SmellPod) {
-	smells = []models.SmellPod{}
+func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, pod := range pods {
 		p := &implementation.Pod{
 			Pod: &pod,
@@ -94,13 +94,13 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []mod
 		p.SmellySecurityContextCapabilities()
 		p.SmellySecurityContextAllowPrivilegeEscalation()
 		p.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, p.SmellPod...)
+		smells = append(smells, p.SmellKubernetes...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellJob) {
-	smells = []models.SmellJob{}
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, job := range jobs {
 		j := &implementation.Job{
 			Job: &job,
@@ -110,13 +110,13 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []mo
 		j.SmellySecurityContextCapabilities()
 		j.SmellySecurityContextAllowPrivilegeEscalation()
 		j.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, j.SmellJob...)
+		smells = append(smells, j.SmellKubernetes...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) (smells []models.SmellCronJob) {
-	smells = []models.SmellCronJob{}
+func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) (smells []models.SmellKubernetes) {
+	smells = []models.SmellKubernetes{}
 	for _, cronJob := range cronJobs {
 		c := &implementation.CronJob{
 			CronJob: &cronJob,
@@ -126,7 +126,7 @@ func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) 
 		c.SmellySecurityContextCapabilities()
 		c.SmellySecurityContextAllowPrivilegeEscalation()
 		c.SmellySecurityContextReadOnlyRootFilesystem()
-		smells = append(smells, c.SmellCronJob...)
+		smells = append(smells, c.SmellKubernetes...)
 	}
 	return smells
 }
@@ -150,58 +150,51 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 		if err != nil {
 			continue
 		}
-		switch obj.(type) {
+		switch obj := obj.(type) {
 		case *corev1.Pod:
-			pods := obj.(*corev1.Pod)
-			log.Info("Name:", pods.GetName())
-			log.Info("Namespace:", pods.GetNamespace())
-			log.Info("Kind:", pods.GetResourceVersion())
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			podSlices = append(podSlices, *pods)
+			podSlices = append(podSlices, *obj)
 		case *appsv1.ReplicaSet:
-			r := obj.(*appsv1.ReplicaSet)
-			log.Info("Name:", r.GetName())
-			log.Info("Namespace:", r.GetNamespace())
-			log.Info("GVK:", r.GroupVersionKind())
-			log.Info("Containers IMAGEMS", r.Spec.Template.Spec.Containers[0].Image)
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("GVK:", obj.GroupVersionKind())
+			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
-			replicaSetSlices = append(replicaSetSlices, *r)
+			replicaSetSlices = append(replicaSetSlices, *obj)
 		case *appsv1.Deployment:
-			d := obj.(*appsv1.Deployment)
-			log.Info("Name:", d.GetName())
-			log.Info("Namespace:", d.GetNamespace())
-			log.Info("GVK:", d.GroupVersionKind())
-			log.Info("Containers IMAGEMS", d.Spec.Template.Spec.Containers[0].Image)
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("GVK:", obj.GroupVersionKind())
+			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
-			deploymentSlices = append(deploymentSlices, *d)
+			deploymentSlices = append(deploymentSlices, *obj)
 		case *appsv1.StatefulSet:
-			ss := obj.(*appsv1.StatefulSet)
-			log.Info("Name:", ss.GetName())
-			log.Info("Namespace:", ss.GetNamespace())
-			log.Info("GVK:", ss.GroupVersionKind())
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
-			statefulSetSlices = append(statefulSetSlices, *ss)
+			statefulSetSlices = append(statefulSetSlices, *obj)
 		case *appsv1.DaemonSet:
-			ds := obj.(*appsv1.DaemonSet)
-			log.Info("Name:", ds.GetName())
-			log.Info("Namespace:", ds.GetNamespace())
-			log.Info("GVK:", ds.GroupVersionKind())
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
-			daemonSetSlices = append(daemonSetSlices, *ds)
+			daemonSetSlices = append(daemonSetSlices, *obj)
 		case *batchv1.Job:
-			job := obj.(*batchv1.Job)
-			log.Info("Name:", job.GetName())
-			log.Info("Namespace:", job.GetNamespace())
-			log.Info("Kind:", job.GetResourceVersion())
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			jobSlices = append(jobSlices, *job)
+			jobSlices = append(jobSlices, *obj)
 		case *batchv1.CronJob:
-			cronJob := obj.(*batchv1.CronJob)
-			log.Info("Name:", cronJob.GetName())
-			log.Info("Namespace:", cronJob.GetNamespace())
-			log.Info("Kind:", cronJob.GetResourceVersion())
+			log.Info("Name:", obj.GetName())
+			log.Info("Namespace:", obj.GetNamespace())
+			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			cronJobSlices = append(cronJobSlices, *cronJob)
+			cronJobSlices = append(cronJobSlices, *obj)
 		}
 	}
 	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 && len(jobSlices) == 0 && len(cronJobSlices) == 0 {
