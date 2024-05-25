@@ -131,16 +131,9 @@ func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) 
 	return smells
 }
 
-func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []corev1.Pod, replicaSets []appsv1.ReplicaSet, deployments []appsv1.Deployment, statefulsets []appsv1.StatefulSet, daemonsets []appsv1.DaemonSet, jobs []batchv1.Job, cronJobs []batchv1.CronJob, err error) {
+func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models.KubernetesWorkloads, error) {
 	log.Info("Executing smelly service")
-	var podSlices []corev1.Pod
-	var replicaSetSlices []appsv1.ReplicaSet
-	var deploymentSlices []appsv1.Deployment
-	var statefulSetSlices []appsv1.StatefulSet
-	var daemonSetSlices []appsv1.DaemonSet
-	var jobSlices []batchv1.Job
-	var cronJobSlices []batchv1.CronJob
-
+	kubernetesWorkloads := new(models.KubernetesWorkloads)
 	decode := scheme.Codecs.UniversalDeserializer().Decode
 	for _, spec := range strings.Split(manifestToFindSmells, "---") {
 		if len(spec) == 0 {
@@ -156,50 +149,50 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (pods []
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			podSlices = append(podSlices, *obj)
+			kubernetesWorkloads.Pods = append(kubernetesWorkloads.Pods, *obj)
 		case *appsv1.ReplicaSet:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
-			replicaSetSlices = append(replicaSetSlices, *obj)
+			kubernetesWorkloads.ReplicaSets = append(kubernetesWorkloads.ReplicaSets, *obj)
 		case *appsv1.Deployment:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
-			deploymentSlices = append(deploymentSlices, *obj)
+			kubernetesWorkloads.Deployments = append(kubernetesWorkloads.Deployments, *obj)
 		case *appsv1.StatefulSet:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
-			statefulSetSlices = append(statefulSetSlices, *obj)
+			kubernetesWorkloads.StatefulSets = append(kubernetesWorkloads.StatefulSets, *obj)
 		case *appsv1.DaemonSet:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
-			daemonSetSlices = append(daemonSetSlices, *obj)
+			kubernetesWorkloads.DaemonSets = append(kubernetesWorkloads.DaemonSets, *obj)
 		case *batchv1.Job:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			jobSlices = append(jobSlices, *obj)
+			kubernetesWorkloads.Jobs = append(kubernetesWorkloads.Jobs, *obj)
 		case *batchv1.CronJob:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
-			cronJobSlices = append(cronJobSlices, *obj)
+			kubernetesWorkloads.CronJobs = append(kubernetesWorkloads.CronJobs, *obj)
 		}
 	}
-	if len(podSlices) == 0 && len(deploymentSlices) == 0 && len(statefulSetSlices) == 0 && len(daemonSetSlices) == 0 && len(jobSlices) == 0 && len(cronJobSlices) == 0 {
-		log.Info("No pods, deployments, statefulsets or daemonsets found in the manifest")
-		return nil, nil, nil, nil, nil, nil, nil, errors.New("no pods, deployments, statefulsets or daemonsets found in the manifest. Please provide a valid manifest with at least one pod, deployment, statefulset or daemonset")
+	if kubernetesWorkloads.IsEmpty() {
+		log.Info("could not load any kubernetes workload from provided resource")
+		return nil, errors.New("could not load any kubernetes workload from provided resource")
 	}
-	return podSlices, replicaSetSlices, deploymentSlices, statefulSetSlices, daemonSetSlices, jobSlices, cronJobSlices, nil
+	return kubernetesWorkloads, nil
 }
