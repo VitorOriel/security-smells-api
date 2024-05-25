@@ -5,6 +5,7 @@ type SmellKubernetes struct {
 	Namespace         string `json:"namespace" validate:"required"`
 	WorkloadKind      string `json:"workload_kind" validate:"required"`
 	WorkloadLabelName string `json:"workload_label_name" validate:"required"`
+	WorkloadPosition  int    `json:"workload_position" validate:"required"`
 	ContainerName     string `json:"container_name" validate:"required"`
 	ContainerImage    string `json:"container_image" validate:"required"`
 	Message           string `json:"message" validate:"required"`
