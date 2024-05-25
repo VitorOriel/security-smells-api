@@ -9,8 +9,9 @@ import (
 
 type StatefulSet struct {
 	interfaces.SmellyStatefulSet
-	StatefulSet     *v1.StatefulSet
-	SmellKubernetes []models.SmellKubernetes
+	StatefulSet      *v1.StatefulSet
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (statefulset *StatefulSet) SmellySecurityContextReadOnlyRootFilesystem() {

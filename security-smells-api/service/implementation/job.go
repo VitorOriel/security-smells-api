@@ -9,8 +9,9 @@ import (
 
 type Job struct {
 	interfaces.SmellyJob
-	Job             *batchv1.Job
-	SmellKubernetes []models.SmellKubernetes
+	Job              *batchv1.Job
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (job *Job) SmellySecurityContextAllowPrivilegeEscalation() {

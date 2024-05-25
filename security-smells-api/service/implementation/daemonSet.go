@@ -7,8 +7,9 @@ import (
 )
 
 type DaemonSet struct {
-	DaemonSet       *appsv1.DaemonSet
-	SmellKubernetes []models.SmellKubernetes
+	DaemonSet        *appsv1.DaemonSet
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (daemonSet *DaemonSet) SmellySecurityContextReadOnlyRootFilesystem() {

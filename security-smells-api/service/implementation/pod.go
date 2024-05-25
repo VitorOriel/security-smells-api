@@ -9,8 +9,9 @@ import (
 
 type Pod struct {
 	interfaces.SmellyDeployment
-	Pod             *corev1.Pod
-	SmellKubernetes []models.SmellKubernetes
+	Pod              *corev1.Pod
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (pod *Pod) SmellySecurityContextAllowPrivilegeEscalation() {

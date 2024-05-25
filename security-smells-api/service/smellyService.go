@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"security-smells-api/constants"
 	"security-smells-api/models"
 	"security-smells-api/repository"
 	"security-smells-api/service/implementation"
@@ -18,11 +19,12 @@ type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
 }
 
-func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, replicaSet := range replicaSets {
+	for i, replicaSet := range replicaSets {
 		r := &implementation.ReplicaSet{
-			ReplicaSet: &replicaSet,
+			ReplicaSet:       &replicaSet,
+			WorkloadPosition: workloadPosition[i],
 		}
 		r.SmellyResourceAndLimit()
 		r.SmellySecurityContextRunAsUser()
@@ -34,11 +36,12 @@ func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.Repl
 	return smells
 }
 
-func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, daemonSet := range daemonSets {
+	for i, daemonSet := range daemonSets {
 		d := &implementation.DaemonSet{
-			DaemonSet: &daemonSet,
+			DaemonSet:        &daemonSet,
+			WorkloadPosition: workloadPosition[i],
 		}
 		d.SmellyResourceAndLimit()
 		d.SmellySecurityContextRunAsUser()
@@ -50,11 +53,12 @@ func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.Daemon
 	return smells
 }
 
-func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, statefulSet := range statefulSets {
+	for i, statefulSet := range statefulSets {
 		s := &implementation.StatefulSet{
-			StatefulSet: &statefulSet,
+			StatefulSet:      &statefulSet,
+			WorkloadPosition: workloadPosition[i],
 		}
 		s.SmellyResourceAndLimit()
 		s.SmellySecurityContextRunAsUser()
@@ -66,11 +70,12 @@ func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.St
 	return smells
 }
 
-func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, deployment := range deployments {
+	for i, deployment := range deployments {
 		d := &implementation.Deployment{
-			Deployment: &deployment,
+			Deployment:       &deployment,
+			WorkloadPosition: workloadPosition[i],
 		}
 		d.SmellyResourceAndLimit()
 		d.SmellySecurityContextRunAsUser()
@@ -83,11 +88,12 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 	return smells
 }
 
-func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, pod := range pods {
+	for i, pod := range pods {
 		p := &implementation.Pod{
-			Pod: &pod,
+			Pod:              &pod,
+			WorkloadPosition: workloadPosition[i],
 		}
 		p.SmellyResourceAndLimit()
 		p.SmellySecurityContextRunAsUser()
@@ -99,11 +105,12 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod) (smells []mod
 	return smells
 }
 
-func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, job := range jobs {
+	for i, job := range jobs {
 		j := &implementation.Job{
-			Job: &job,
+			Job:              &job,
+			WorkloadPosition: workloadPosition[i],
 		}
 		j.SmellyResourceAndLimit()
 		j.SmellySecurityContextRunAsUser()
@@ -115,11 +122,12 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job) (smells []mo
 	return smells
 }
 
-func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) (smells []models.SmellKubernetes) {
+func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) (smells []models.SmellKubernetes) {
 	smells = []models.SmellKubernetes{}
-	for _, cronJob := range cronJobs {
+	for i, cronJob := range cronJobs {
 		c := &implementation.CronJob{
-			CronJob: &cronJob,
+			CronJob:          &cronJob,
+			WorkloadPosition: workloadPosition[i],
 		}
 		c.SmellyResourceAndLimit()
 		c.SmellySecurityContextRunAsUser()
@@ -131,11 +139,12 @@ func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob) 
 	return smells
 }
 
-func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models.KubernetesWorkloads, error) {
+func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models.KubernetesWorkloads, *models.FileMetadata[constants.KubernetesWorkload], error) {
 	log.Info("Executing smelly service")
 	kubernetesWorkloads := new(models.KubernetesWorkloads)
+	fileMetadata := models.NewFileMetadata[constants.KubernetesWorkload]()
 	decode := scheme.Codecs.UniversalDeserializer().Decode
-	for _, spec := range strings.Split(manifestToFindSmells, "---") {
+	for i, spec := range strings.Split(manifestToFindSmells, "---") {
 		if len(spec) == 0 {
 			continue
 		}
@@ -149,6 +158,7 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.POD_WORKLOAD, i)
 			kubernetesWorkloads.Pods = append(kubernetesWorkloads.Pods, *obj)
 		case *appsv1.ReplicaSet:
 			log.Info("Name:", obj.GetName())
@@ -156,6 +166,7 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.REPLICASET_WORKLOAD, i)
 			kubernetesWorkloads.ReplicaSets = append(kubernetesWorkloads.ReplicaSets, *obj)
 		case *appsv1.Deployment:
 			log.Info("Name:", obj.GetName())
@@ -163,36 +174,41 @@ func (smellyService SmellyService) Execute(manifestToFindSmells string) (*models
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("Containers IMAGEMS", obj.Spec.Template.Spec.Containers[0].Image)
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.DEPLOYMENT_WORKLOAD, i)
 			kubernetesWorkloads.Deployments = append(kubernetesWorkloads.Deployments, *obj)
 		case *appsv1.StatefulSet:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.STATEFULSET_WORKLOAD, i)
 			kubernetesWorkloads.StatefulSets = append(kubernetesWorkloads.StatefulSets, *obj)
 		case *appsv1.DaemonSet:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("GVK:", obj.GroupVersionKind())
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.DAEMONSET_WORKLOAD, i)
 			kubernetesWorkloads.DaemonSets = append(kubernetesWorkloads.DaemonSets, *obj)
 		case *batchv1.Job:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.JOB_WORKLOAD, i)
 			kubernetesWorkloads.Jobs = append(kubernetesWorkloads.Jobs, *obj)
 		case *batchv1.CronJob:
 			log.Info("Name:", obj.GetName())
 			log.Info("Namespace:", obj.GetNamespace())
 			log.Info("Kind:", obj.GetResourceVersion())
 			log.Info("---")
+			fileMetadata.AppendWorkloadPosition(constants.CRONJOB_WORKLOAD, i)
 			kubernetesWorkloads.CronJobs = append(kubernetesWorkloads.CronJobs, *obj)
 		}
 	}
 	if kubernetesWorkloads.IsEmpty() {
 		log.Info("could not load any kubernetes workload from provided resource")
-		return nil, errors.New("could not load any kubernetes workload from provided resource")
+		return nil, nil, errors.New("could not load any kubernetes workload from provided resource")
 	}
-	return kubernetesWorkloads, nil
+	return kubernetesWorkloads, fileMetadata, nil
 }

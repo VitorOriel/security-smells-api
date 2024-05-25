@@ -9,8 +9,9 @@ import (
 
 type Deployment struct {
 	interfaces.SmellyDeployment
-	Deployment      *appsv1.Deployment
-	SmellKubernetes []models.SmellKubernetes
+	Deployment       *appsv1.Deployment
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (deployment *Deployment) SmellySecurityContextReadOnlyRootFilesystem() {

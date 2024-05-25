@@ -9,8 +9,9 @@ import (
 
 type CronJob struct {
 	interfaces.SmellyDeployment
-	CronJob         *batchv1.CronJob
-	SmellKubernetes []models.SmellKubernetes
+	CronJob          *batchv1.CronJob
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {

@@ -9,8 +9,9 @@ import (
 
 type ReplicaSet struct {
 	interfaces.SmellyReplicaSet
-	ReplicaSet      *appsv1.ReplicaSet
-	SmellKubernetes []models.SmellKubernetes
+	ReplicaSet       *appsv1.ReplicaSet
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (replicaSet *ReplicaSet) SmellySecurityContextReadOnlyRootFilesystem() {

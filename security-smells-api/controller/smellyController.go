@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"security-smells-api/constants"
 	"security-smells-api/models"
 	"security-smells-api/service"
 
@@ -19,7 +20,7 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 		return err
 	}
 	log.Info("Smelly received", smelly)
-	kubernetesWorkloads, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
+	kubernetesWorkloads, fileMetadata, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
 	if err != nil {
 		return c.JSON(
 			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
@@ -33,13 +34,13 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	log.Info("Jobs", kubernetesWorkloads.Jobs)
 	log.Info("CronJobs", kubernetesWorkloads.CronJobs)
 
-	smellsPod := smellyController.SmellyService.FindPodSmell(kubernetesWorkloads.Pods)
-	smellsReplicaSet := smellyController.SmellyService.FindReplicaSetSmell(kubernetesWorkloads.ReplicaSets)
-	smellsDeployment := smellyController.SmellyService.FindDeploymentSmell(kubernetesWorkloads.Deployments)
-	smellsJob := smellyController.SmellyService.FindJobSmell(kubernetesWorkloads.Jobs)
-	smellsCronJob := smellyController.SmellyService.FindCronJobSmell(kubernetesWorkloads.CronJobs)
-	smellsStatefulSet := smellyController.SmellyService.FindStatefulSetSmell(kubernetesWorkloads.StatefulSets)
-	smellsDaemonSet := smellyController.SmellyService.FindDaemonSetSmell(kubernetesWorkloads.DaemonSets)
+	smellsPod := smellyController.SmellyService.FindPodSmell(kubernetesWorkloads.Pods, fileMetadata.WorkloadPositionMapByManifest[constants.POD_WORKLOAD])
+	smellsReplicaSet := smellyController.SmellyService.FindReplicaSetSmell(kubernetesWorkloads.ReplicaSets, fileMetadata.WorkloadPositionMapByManifest[constants.REPLICASET_WORKLOAD])
+	smellsDeployment := smellyController.SmellyService.FindDeploymentSmell(kubernetesWorkloads.Deployments, fileMetadata.WorkloadPositionMapByManifest[constants.DEPLOYMENT_WORKLOAD])
+	smellsJob := smellyController.SmellyService.FindJobSmell(kubernetesWorkloads.Jobs, fileMetadata.WorkloadPositionMapByManifest[constants.JOB_WORKLOAD])
+	smellsCronJob := smellyController.SmellyService.FindCronJobSmell(kubernetesWorkloads.CronJobs, fileMetadata.WorkloadPositionMapByManifest[constants.CRONJOB_WORKLOAD])
+	smellsStatefulSet := smellyController.SmellyService.FindStatefulSetSmell(kubernetesWorkloads.StatefulSets, fileMetadata.WorkloadPositionMapByManifest[constants.STATEFULSET_WORKLOAD])
+	smellsDaemonSet := smellyController.SmellyService.FindDaemonSetSmell(kubernetesWorkloads.DaemonSets, fileMetadata.WorkloadPositionMapByManifest[constants.DAEMONSET_WORKLOAD])
 	smellyResponseDTO := models.SmellyResponseDTO{
 		Meta: models.Meta{
 			TotalOfSmells: len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob),
