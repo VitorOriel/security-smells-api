@@ -9,8 +9,9 @@ import (
 
 type CronJob struct {
 	interfaces.SmellyDeployment
-	CronJob      *batchv1.CronJob
-	SmellCronJob []models.SmellCronJob
+	CronJob          *batchv1.CronJob
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {
@@ -22,16 +23,17 @@ func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {
 	kind := cronJob.CronJob.GroupVersionKind().Kind
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    cronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
-				Suggestion:     "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: cronJobName,
+				WorkloadPosition:  cronJob.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
+				Suggestion:        "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
 			}
-			cronJob.SmellCronJob = append(cronJob.SmellCronJob, smellCronJob)
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, smellCronJob)
 		}
 	}
 }
@@ -45,16 +47,17 @@ func (cronJob *CronJob) SmellySecurityContextCapabilities() {
 	kind := cronJob.CronJob.GroupVersionKind().Kind
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    cronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Capabilities not set into " + container.Name + " your container is running without Capabilities",
-				Suggestion:     "Please add Capabilities into " + container.Name + " to avoid running without Capabilities",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: cronJobName,
+				WorkloadPosition:  cronJob.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Capabilities not set into " + container.Name + " your container is running without Capabilities",
+				Suggestion:        "Please add Capabilities into " + container.Name + " to avoid running without Capabilities",
 			}
-			cronJob.SmellCronJob = append(cronJob.SmellCronJob, smellCronJob)
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, smellCronJob)
 		}
 	}
 }
@@ -68,16 +71,17 @@ func (cronJob *CronJob) SmellySecurityContextRunAsUser() {
 	kind := cronJob.CronJob.GroupVersionKind().Kind
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    cronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "RunAsUser not set into " + container.Name + " your container is running with root user",
-				Suggestion:     "Please add RunAsUser into " + container.Name + " to avoid running with root user",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: cronJobName,
+				WorkloadPosition:  cronJob.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "RunAsUser not set into " + container.Name + " your container is running with root user",
+				Suggestion:        "Please add RunAsUser into " + container.Name + " to avoid running with root user",
 			}
-			cronJob.SmellCronJob = append(cronJob.SmellCronJob, smellCronJob)
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, smellCronJob)
 		}
 	}
 }
@@ -91,28 +95,28 @@ func (CronJob *CronJob) SmellyResourceAndLimit() {
 	kind := CronJob.CronJob.GroupVersionKind().Kind
 	for _, container := range CronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.Resources.Requests == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    CronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Resources not set into " + container.Name + " your container is running without Resources",
-				Suggestion:     "Please add Resources into " + container.Name + " to avoid running without Resources",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: CronJobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Resources not set into " + container.Name + " your container is running without Resources",
+				Suggestion:        "Please add Resources into " + container.Name + " to avoid running without Resources",
 			}
-			CronJob.SmellCronJob = append(CronJob.SmellCronJob, smellCronJob)
+			CronJob.SmellKubernetes = append(CronJob.SmellKubernetes, smellCronJob)
 		}
 		if container.Resources.Limits == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    CronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Limits not set into " + container.Name + " your container is running without Limits",
-				Suggestion:     "Please add Limits into " + container.Name + " to avoid running without Limits",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: CronJobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Limits not set into " + container.Name + " your container is running without Limits",
+				Suggestion:        "Please add Limits into " + container.Name + " to avoid running without Limits",
 			}
-			CronJob.SmellCronJob = append(CronJob.SmellCronJob, smellCronJob)
+			CronJob.SmellKubernetes = append(CronJob.SmellKubernetes, smellCronJob)
 		}
 	}
 }
@@ -126,16 +130,16 @@ func (CronJob *CronJob) SmellySecurityContextReadOnlyRootFilesystem() {
 	kind := CronJob.CronJob.GroupVersionKind().Kind
 	for _, container := range CronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			smellCronJob := models.SmellCronJob{
-				NameSpace:      nameSpace,
-				CronJobName:    CronJobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
-				Suggestion:     "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
+			smellCronJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: CronJobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
+				Suggestion:        "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
 			}
-			CronJob.SmellCronJob = append(CronJob.SmellCronJob, smellCronJob)
+			CronJob.SmellKubernetes = append(CronJob.SmellKubernetes, smellCronJob)
 		}
 	}
 }

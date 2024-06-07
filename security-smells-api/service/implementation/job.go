@@ -9,8 +9,9 @@ import (
 
 type Job struct {
 	interfaces.SmellyJob
-	Job      *batchv1.Job
-	SmellJob []models.SmellJob
+	Job              *batchv1.Job
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (job *Job) SmellySecurityContextAllowPrivilegeEscalation() {
@@ -22,16 +23,17 @@ func (job *Job) SmellySecurityContextAllowPrivilegeEscalation() {
 	kind := job.Job.GroupVersionKind().Kind
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        jobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
-				Suggestion:     "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: jobName,
+				WorkloadPosition:  job.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
+				Suggestion:        "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
 			}
-			job.SmellJob = append(job.SmellJob, smellJob)
+			job.SmellKubernetes = append(job.SmellKubernetes, smellJob)
 		}
 	}
 }
@@ -45,16 +47,17 @@ func (job *Job) SmellySecurityContextCapabilities() {
 	kind := job.Job.GroupVersionKind().Kind
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        jobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Capabilities not set into " + container.Name + " your container is running without Capabilities",
-				Suggestion:     "Please add Capabilities into " + container.Name + " to avoid running without Capabilities",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: jobName,
+				WorkloadPosition:  job.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Capabilities not set into " + container.Name + " your container is running without Capabilities",
+				Suggestion:        "Please add Capabilities into " + container.Name + " to avoid running without Capabilities",
 			}
-			job.SmellJob = append(job.SmellJob, smellJob)
+			job.SmellKubernetes = append(job.SmellKubernetes, smellJob)
 		}
 	}
 }
@@ -68,16 +71,17 @@ func (job *Job) SmellySecurityContextRunAsUser() {
 	kind := job.Job.GroupVersionKind().Kind
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        jobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "RunAsUser not set into " + container.Name + " your container is running with root user",
-				Suggestion:     "Please add RunAsUser into " + container.Name + " to avoid running with root user",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: jobName,
+				WorkloadPosition:  job.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "RunAsUser not set into " + container.Name + " your container is running with root user",
+				Suggestion:        "Please add RunAsUser into " + container.Name + " to avoid running with root user",
 			}
-			job.SmellJob = append(job.SmellJob, smellJob)
+			job.SmellKubernetes = append(job.SmellKubernetes, smellJob)
 		}
 	}
 }
@@ -91,28 +95,28 @@ func (Job *Job) SmellyResourceAndLimit() {
 	kind := Job.Job.GroupVersionKind().Kind
 	for _, container := range Job.Job.Spec.Template.Spec.Containers {
 		if container.Resources.Requests == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        JobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Resources not set into " + container.Name + " your container is running without Resources",
-				Suggestion:     "Please add Resources into " + container.Name + " to avoid running without Resources",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: JobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Resources not set into " + container.Name + " your container is running without Resources",
+				Suggestion:        "Please add Resources into " + container.Name + " to avoid running without Resources",
 			}
-			Job.SmellJob = append(Job.SmellJob, smellJob)
+			Job.SmellKubernetes = append(Job.SmellKubernetes, smellJob)
 		}
 		if container.Resources.Limits == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        JobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Limits not set into " + container.Name + " your container is running without Limits",
-				Suggestion:     "Please add Limits into " + container.Name + " to avoid running without Limits",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: JobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Limits not set into " + container.Name + " your container is running without Limits",
+				Suggestion:        "Please add Limits into " + container.Name + " to avoid running without Limits",
 			}
-			Job.SmellJob = append(Job.SmellJob, smellJob)
+			Job.SmellKubernetes = append(Job.SmellKubernetes, smellJob)
 		}
 	}
 }
@@ -126,16 +130,16 @@ func (Job *Job) SmellySecurityContextReadOnlyRootFilesystem() {
 	kind := Job.Job.GroupVersionKind().Kind
 	for _, container := range Job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			smellJob := models.SmellJob{
-				NameSpace:      nameSpace,
-				JobName:        JobName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
-				Suggestion:     "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
+			smellJob := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: JobName,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
+				Suggestion:        "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
 			}
-			Job.SmellJob = append(Job.SmellJob, smellJob)
+			Job.SmellKubernetes = append(Job.SmellKubernetes, smellJob)
 		}
 	}
 }

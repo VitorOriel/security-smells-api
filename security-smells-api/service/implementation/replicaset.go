@@ -9,8 +9,9 @@ import (
 
 type ReplicaSet struct {
 	interfaces.SmellyReplicaSet
-	ReplicaSet      *appsv1.ReplicaSet
-	SmellReplicaSet []models.SmellReplicaSet
+	ReplicaSet       *appsv1.ReplicaSet
+	WorkloadPosition int
+	SmellKubernetes  []models.SmellKubernetes
 }
 
 func (replicaSet *ReplicaSet) SmellySecurityContextReadOnlyRootFilesystem() {
@@ -22,16 +23,17 @@ func (replicaSet *ReplicaSet) SmellySecurityContextReadOnlyRootFilesystem() {
 	kind := replicaSet.ReplicaSet.GroupVersionKind().Kind
 	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
-				Suggestion:     "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "ReadOnlyRootFilesystem not set into " + container.Name + " your container is running with ReadWriteRootFilesystem",
+				Suggestion:        "Please add ReadOnlyRootFilesystem into " + container.Name + " to avoid running with ReadWriteRootFilesystem",
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 	}
 }
@@ -45,16 +47,17 @@ func (replicaSet *ReplicaSet) SmellySecurityContextAllowPrivilegeEscalation() {
 	kind := replicaSet.ReplicaSet.GroupVersionKind().Kind
 	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
-				Suggestion:     "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "AllowPrivilegeEscalation not set into " + container.Name + " your container is running with AllowPrivilegeEscalation",
+				Suggestion:        "Please add AllowPrivilegeEscalation into " + container.Name + " to avoid running with AllowPrivilegeEscalation",
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 	}
 }
@@ -68,16 +71,17 @@ func (replicaSet *ReplicaSet) SmellySecurityContextCapabilities() {
 	kind := replicaSet.ReplicaSet.GroupVersionKind().Kind
 	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Capabilities not set into " + container.Name + " your container is running with full capabilities",
-				Suggestion:     "Please add capabilities into " + container.Name + " to avoid running with full capabilities",
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Capabilities not set into " + container.Name + " your container is running with full capabilities",
+				Suggestion:        "Please add capabilities into " + container.Name + " to avoid running with full capabilities",
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 
 	}
@@ -92,16 +96,17 @@ func (replicaSet *ReplicaSet) SmellySecurityContextRunAsUser() {
 	kind := replicaSet.ReplicaSet.GroupVersionKind().Kind
 	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "RunAsUser not set into " + container.Name + " your container is running as root",
-				Suggestion:     "Please add runAsUser into " + container.Name + " to avoid running as root",
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "RunAsUser not set into " + container.Name + " your container is running as root",
+				Suggestion:        "Please add runAsUser into " + container.Name + " to avoid running as root",
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 	}
 }
@@ -117,28 +122,30 @@ func (replicaSet *ReplicaSet) SmellyResourceAndLimit() {
 	kind := replicaSet.ReplicaSet.GroupVersionKind().Kind
 	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
 		if container.Resources.Limits == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Resource limits not set for container " + container.Name,
-				Suggestion:     "Set resource limits for container " + container.Name,
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Resource limits not set for container " + container.Name,
+				Suggestion:        "Set resource limits for container " + container.Name,
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 		if container.Resources.Requests == nil {
-			smellReplicaSet := models.SmellReplicaSet{
-				NameSpace:      nameSpace,
-				ReplicaSetName: replicaSetName,
-				ContainerName:  container.Name,
-				ContainerImage: container.Image,
-				Kind:           kind,
-				Message:        "Resource requests not set for container " + container.Name,
-				Suggestion:     "Set resource requests for container " + container.Name,
+			smellReplicaSet := models.SmellKubernetes{
+				Namespace:         nameSpace,
+				WorkloadKind:      kind,
+				WorkloadLabelName: replicaSetName,
+				WorkloadPosition:  replicaSet.WorkloadPosition,
+				ContainerName:     container.Name,
+				ContainerImage:    container.Image,
+				Message:           "Resource requests not set for container " + container.Name,
+				Suggestion:        "Set resource requests for container " + container.Name,
 			}
-			replicaSet.SmellReplicaSet = append(replicaSet.SmellReplicaSet, smellReplicaSet)
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, smellReplicaSet)
 		}
 	}
 }
