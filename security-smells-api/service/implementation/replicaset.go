@@ -57,3 +57,11 @@ func (replicaSet *ReplicaSet) SmellyResourceAndLimit() {
 		}
 	}
 }
+
+func (replicaSet *ReplicaSet) SmellySecurityContextPrivileged() {
+	for _, container := range replicaSet.ReplicaSet.Spec.Template.Spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
+			replicaSet.SmellKubernetes = append(replicaSet.SmellKubernetes, models.NewSmellKubernetes(replicaSet.ReplicaSet, replicaSet.ReplicaSet.GetObjectKind(), &container, replicaSet.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+		}
+	}
+}

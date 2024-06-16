@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyDaemonSet interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyDaemonSet struct {
 	ISmellyDaemonSet ISmellyDaemonSet
 }
 
-func (smellyDaemonSet *SmellyDaemonSet) checkSmellyDemonSet() {
+func (smellyDaemonSet *SmellyDaemonSet) CheckSmelly() {
 	smellyDaemonSet.ISmellyDaemonSet.SmellyResourceAndLimit()
 	smellyDaemonSet.ISmellyDaemonSet.SmellySecurityContextRunAsUser()
 	smellyDaemonSet.ISmellyDaemonSet.SmellySecurityContextCapabilities()
 	smellyDaemonSet.ISmellyDaemonSet.SmellySecurityContextAllowPrivilegeEscalation()
 	smellyDaemonSet.ISmellyDaemonSet.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyDaemonSet.ISmellyDaemonSet.SmellySecurityContextPrivileged()
 }

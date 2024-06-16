@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyPod interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyPod struct {
 	ISmellyPod ISmellyDeployment
 }
 
-func (smellyDeployment *SmellyPod) checkSmellyPod() {
-	smellyDeployment.ISmellyPod.SmellyResourceAndLimit()
-	smellyDeployment.ISmellyPod.SmellySecurityContextRunAsUser()
-	smellyDeployment.ISmellyPod.SmellySecurityContextCapabilities()
-	smellyDeployment.ISmellyPod.SmellySecurityContextAllowPrivilegeEscalation()
-	smellyDeployment.ISmellyPod.SmellySecurityContextReadOnlyRootFilesystem()
+func (smellyPod *SmellyPod) CheckSmelly() {
+	smellyPod.ISmellyPod.SmellyResourceAndLimit()
+	smellyPod.ISmellyPod.SmellySecurityContextRunAsUser()
+	smellyPod.ISmellyPod.SmellySecurityContextCapabilities()
+	smellyPod.ISmellyPod.SmellySecurityContextAllowPrivilegeEscalation()
+	smellyPod.ISmellyPod.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyPod.ISmellyPod.SmellySecurityContextPrivileged()
 }

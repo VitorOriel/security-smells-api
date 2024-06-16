@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyReplicaSet interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyReplicaSet struct {
 	ISmellyReplicaSet ISmellyReplicaSet
 }
 
-func (smellyReplicaSet *SmellyReplicaSet) checkSmellyReplicaSet() {
+func (smellyReplicaSet *SmellyReplicaSet) CheckSmelly() {
 	smellyReplicaSet.ISmellyReplicaSet.SmellyResourceAndLimit()
 	smellyReplicaSet.ISmellyReplicaSet.SmellySecurityContextRunAsUser()
 	smellyReplicaSet.ISmellyReplicaSet.SmellySecurityContextCapabilities()
 	smellyReplicaSet.ISmellyReplicaSet.SmellySecurityContextAllowPrivilegeEscalation()
 	smellyReplicaSet.ISmellyReplicaSet.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyReplicaSet.ISmellyReplicaSet.SmellySecurityContextPrivileged()
 }

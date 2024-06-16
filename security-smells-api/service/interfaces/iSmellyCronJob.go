@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyCronJob interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyCronJob struct {
 	ISmellyCronJob ISmellyCronJob
 }
 
-func (smellyCronJob *SmellyCronJob) checkSmellyCronJob() {
+func (smellyCronJob *SmellyCronJob) CheckSmelly() {
 	smellyCronJob.ISmellyCronJob.SmellyResourceAndLimit()
 	smellyCronJob.ISmellyCronJob.SmellySecurityContextRunAsUser()
 	smellyCronJob.ISmellyCronJob.SmellySecurityContextCapabilities()
 	smellyCronJob.ISmellyCronJob.SmellySecurityContextAllowPrivilegeEscalation()
 	smellyCronJob.ISmellyCronJob.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyCronJob.ISmellyCronJob.SmellySecurityContextPrivileged()
 }

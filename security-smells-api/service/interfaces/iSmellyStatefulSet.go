@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyStatefulSet interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyStatefulSet struct {
 	ISmellyStatefulSet ISmellyStatefulSet
 }
 
-func (smellyStatefulSet *SmellyStatefulSet) checkSmellyStatefulSet() {
+func (smellyStatefulSet *SmellyStatefulSet) CheckSmelly() {
 	smellyStatefulSet.ISmellyStatefulSet.SmellyResourceAndLimit()
 	smellyStatefulSet.ISmellyStatefulSet.SmellySecurityContextRunAsUser()
 	smellyStatefulSet.ISmellyStatefulSet.SmellySecurityContextCapabilities()
 	smellyStatefulSet.ISmellyStatefulSet.SmellySecurityContextAllowPrivilegeEscalation()
 	smellyStatefulSet.ISmellyStatefulSet.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyStatefulSet.ISmellyStatefulSet.SmellySecurityContextPrivileged()
 }

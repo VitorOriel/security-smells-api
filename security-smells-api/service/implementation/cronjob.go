@@ -57,3 +57,11 @@ func (cronJob *CronJob) SmellySecurityContextReadOnlyRootFilesystem() {
 		}
 	}
 }
+
+func (cronJob *CronJob) SmellySecurityContextPrivileged() {
+	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+		}
+	}
+}

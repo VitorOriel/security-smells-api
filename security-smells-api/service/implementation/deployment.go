@@ -57,3 +57,11 @@ func (deployment *Deployment) SmellyResourceAndLimit() {
 		}
 	}
 }
+
+func (deployment *Deployment) SmellySecurityContextPrivileged() {
+	for _, container := range deployment.Deployment.Spec.Template.Spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
+			deployment.SmellKubernetes = append(deployment.SmellKubernetes, models.NewSmellKubernetes(deployment.Deployment, deployment.Deployment.GetObjectKind(), &container, deployment.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+		}
+	}
+}

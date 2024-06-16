@@ -57,3 +57,11 @@ func (pod *Pod) SmellySecurityContextReadOnlyRootFilesystem() {
 		}
 	}
 }
+
+func (pod *Pod) SmellySecurityContextPrivileged() {
+	for _, container := range pod.Pod.Spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
+			pod.SmellKubernetes = append(pod.SmellKubernetes, models.NewSmellKubernetes(pod.Pod, pod.Pod.GetObjectKind(), &container, pod.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+		}
+	}
+}

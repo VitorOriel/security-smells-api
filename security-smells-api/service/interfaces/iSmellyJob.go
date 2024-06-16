@@ -1,21 +1,18 @@
 package interfaces
 
 type ISmellyJob interface {
-	SmellyResourceAndLimit()
-	SmellySecurityContextRunAsUser()
-	SmellySecurityContextCapabilities()
-	SmellySecurityContextAllowPrivilegeEscalation()
-	SmellySecurityContextReadOnlyRootFilesystem()
+	ISmellyKubernetes
 }
 
 type SmellyJob struct {
 	ISmellyJob ISmellyJob
 }
 
-func (smellyJob *SmellyJob) checkSmellyJob() {
+func (smellyJob *SmellyJob) CheckSmelly() {
 	smellyJob.ISmellyJob.SmellyResourceAndLimit()
 	smellyJob.ISmellyJob.SmellySecurityContextRunAsUser()
 	smellyJob.ISmellyJob.SmellySecurityContextCapabilities()
 	smellyJob.ISmellyJob.SmellySecurityContextAllowPrivilegeEscalation()
 	smellyJob.ISmellyJob.SmellySecurityContextReadOnlyRootFilesystem()
+	smellyJob.ISmellyJob.SmellySecurityContextPrivileged()
 }
