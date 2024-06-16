@@ -22,7 +22,7 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	log.Info("Smelly received", smelly)
 	kubernetesWorkloads, fileMetadata, err := smellyController.SmellyService.Execute(smelly.YamlToValidate)
 	if err != nil {
-		return c.JSON(
+		return c.Status(fiber.StatusBadRequest).JSON(
 			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
 		)
 	}
