@@ -31,6 +31,7 @@ func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.Repl
 		r.SmellySecurityContextCapabilities()
 		r.SmellySecurityContextAllowPrivilegeEscalation()
 		r.SmellySecurityContextReadOnlyRootFilesystem()
+		r.SmellySecurityContextPrivileged()
 		smells = append(smells, r.SmellKubernetes...)
 	}
 	return smells
@@ -48,6 +49,7 @@ func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.Daemon
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
+		d.SmellySecurityContextPrivileged()
 		smells = append(smells, d.SmellKubernetes...)
 	}
 	return smells
@@ -65,6 +67,7 @@ func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.St
 		s.SmellySecurityContextCapabilities()
 		s.SmellySecurityContextAllowPrivilegeEscalation()
 		s.SmellySecurityContextReadOnlyRootFilesystem()
+		s.SmellySecurityContextPrivileged()
 		smells = append(smells, s.SmellKubernetes...)
 	}
 	return smells
@@ -82,6 +85,7 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
+		d.SmellySecurityContextPrivileged()
 		smells = append(smells, d.SmellKubernetes...)
 	}
 	return smells
@@ -99,6 +103,7 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosit
 		p.SmellySecurityContextCapabilities()
 		p.SmellySecurityContextAllowPrivilegeEscalation()
 		p.SmellySecurityContextReadOnlyRootFilesystem()
+		p.SmellySecurityContextPrivileged()
 		smells = append(smells, p.SmellKubernetes...)
 	}
 	return smells
@@ -116,6 +121,7 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosi
 		j.SmellySecurityContextCapabilities()
 		j.SmellySecurityContextAllowPrivilegeEscalation()
 		j.SmellySecurityContextReadOnlyRootFilesystem()
+		j.SmellySecurityContextPrivileged()
 		smells = append(smells, j.SmellKubernetes...)
 	}
 	return smells
@@ -133,6 +139,7 @@ func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, 
 		c.SmellySecurityContextCapabilities()
 		c.SmellySecurityContextAllowPrivilegeEscalation()
 		c.SmellySecurityContextReadOnlyRootFilesystem()
+		c.SmellySecurityContextPrivileged()
 		smells = append(smells, c.SmellKubernetes...)
 	}
 	return smells
