@@ -43,8 +43,8 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 	smellsDaemonSet := smellyController.SmellyService.FindDaemonSetSmell(kubernetesWorkloads.DaemonSets, fileMetadata.WorkloadPositionMapByManifest[constants.DAEMONSET_WORKLOAD])
 	smellyResponseDTO := models.SmellyResponseDTO{
 		Meta: &models.Meta{
-			TotalOfSmells: len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob) + len(smellsStatefulSet) + len(smellsDaemonSet),
-			Workload:      models.NewWorkloadMeta(kubernetesWorkloads),
+			TotalOfSmells:    len(smellsPod) + len(smellsReplicaSet) + len(smellsDeployment) + len(smellsJob) + len(smellsCronJob) + len(smellsStatefulSet) + len(smellsDaemonSet),
+			DecodedWorkloads: models.NewWorkloadMeta(kubernetesWorkloads),
 		},
 		Data: &models.Data{
 			SmellsPod:         smellsPod,
