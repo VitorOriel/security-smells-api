@@ -19,8 +19,8 @@ type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
 }
 
-func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, replicaSet := range replicaSets {
 		r := &implementation.ReplicaSet{
 			ReplicaSet:       &replicaSet,
@@ -36,8 +36,8 @@ func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.Repl
 	return smells
 }
 
-func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, daemonSet := range daemonSets {
 		d := &implementation.DaemonSet{
 			DaemonSet:        &daemonSet,
@@ -53,8 +53,8 @@ func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.Daemon
 	return smells
 }
 
-func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, statefulSet := range statefulSets {
 		s := &implementation.StatefulSet{
 			StatefulSet:      &statefulSet,
@@ -70,8 +70,8 @@ func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.St
 	return smells
 }
 
-func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, deployment := range deployments {
 		d := &implementation.Deployment{
 			Deployment:       &deployment,
@@ -84,12 +84,11 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 		d.SmellySecurityContextReadOnlyRootFilesystem()
 		smells = append(smells, d.SmellKubernetes...)
 	}
-
 	return smells
 }
 
-func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, pod := range pods {
 		p := &implementation.Pod{
 			Pod:              &pod,
@@ -105,8 +104,8 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosit
 	return smells
 }
 
-func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, job := range jobs {
 		j := &implementation.Job{
 			Job:              &job,
@@ -122,8 +121,8 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosi
 	return smells
 }
 
-func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) (smells []models.SmellKubernetes) {
-	smells = []models.SmellKubernetes{}
+func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) []*models.SmellKubernetes {
+	smells := []*models.SmellKubernetes{}
 	for i, cronJob := range cronJobs {
 		c := &implementation.CronJob{
 			CronJob:          &cronJob,
