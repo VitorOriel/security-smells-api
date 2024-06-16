@@ -26,13 +26,13 @@ func (smellyController SmellyController) Execute(c *fiber.Ctx) error {
 			models.SmellyResponseErrorDTO{YamlToValidate: smelly.YamlToValidate, Message: err.Error()},
 		)
 	}
-	log.Info("Pods", kubernetesWorkloads.Pods)
-	log.Info("ReplicaSets", kubernetesWorkloads.ReplicaSets)
-	log.Info("Deployments", kubernetesWorkloads.Deployments)
-	log.Info("StatefulSets", kubernetesWorkloads.StatefulSets)
-	log.Info("DaemonSets", kubernetesWorkloads.DaemonSets)
-	log.Info("Jobs", kubernetesWorkloads.Jobs)
-	log.Info("CronJobs", kubernetesWorkloads.CronJobs)
+	log.Infof("Pods: %+v", kubernetesWorkloads.Pods)
+	log.Infof("ReplicaSets: %+v", kubernetesWorkloads.ReplicaSets)
+	log.Infof("Deployments: %+v", kubernetesWorkloads.Deployments)
+	log.Infof("StatefulSets: %+v", kubernetesWorkloads.StatefulSets)
+	log.Infof("DaemonSets: %+v", kubernetesWorkloads.DaemonSets)
+	log.Infof("Jobs: %+v", kubernetesWorkloads.Jobs)
+	log.Infof("CronJobs: %+v", kubernetesWorkloads.CronJobs)
 
 	smellsPod := smellyController.SmellyService.FindPodSmell(kubernetesWorkloads.Pods, fileMetadata.WorkloadPositionMapByManifest[constants.POD_WORKLOAD])
 	smellsReplicaSet := smellyController.SmellyService.FindReplicaSetSmell(kubernetesWorkloads.ReplicaSets, fileMetadata.WorkloadPositionMapByManifest[constants.REPLICASET_WORKLOAD])
