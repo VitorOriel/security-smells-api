@@ -34,6 +34,7 @@ func NewSmellKubernetes(
 		Namespace:         namespace,
 		WorkloadKind:      k8sKind.GroupVersionKind().Kind,
 		WorkloadLabelName: k8sObj.GetName(),
+		WorkloadPosition:  workloadPosition,
 		Rule:              rule,
 	}
 	smellKubernetes.setMessageAndSuggestionByRule(container, rule)
