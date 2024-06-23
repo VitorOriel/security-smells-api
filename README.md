@@ -7,6 +7,12 @@ Smelly Kube API was created to identify security vulnerabilities in Kubernetes m
 At the moment, Smelly Kube have the following clients:
 - [Visual Studio Code extension](https://github.com/VitorOriel/smelly-kube-vscode-plugin)
 
+## Running Smelly Kube
+You can either run the server directly through golang or via Dockefile. To run using go:
+1. `cd security-smells-api/`
+2. `go mod tidy`
+3. `go run main.go`
+
 ## Technologies
 
 - Golang
