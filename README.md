@@ -1,5 +1,20 @@
 # Kube Smelly API
 
+Kube Smelly API was created to identify security vulnerabilities in Kubernetes manifests. It uses a REST API to receive the manifest files from the client, and returns a response with the found vulnerabilities. The API documentation can be seen in **API** section.
+
+## Clients
+
+At the moment, Smelly Kube have the following clients:
+- [Visual Studio Code extension](https://github.com/VitorOriel/smelly-kube-vscode-plugin)
+
+## Technologies
+
+- Golang
+
+## Dependencies
+
+The dependencies can be seen in [go.mod](security-smells-api/go.mod) file
+
 ## API
 ### POST /api/v1/smelly
 #### Request
