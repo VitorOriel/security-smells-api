@@ -13,9 +13,11 @@ You can either run the server directly through golang or via Dockefile. To run u
 2. `go mod tidy`
 3. `go run main.go`
 
+The server uses the localhost with port `3000`.
+
 ## Technologies
 
-- Golang
+- Golang v1.22
 
 ## Dependencies
 
