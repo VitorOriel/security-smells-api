@@ -8,7 +8,12 @@ At the moment, Smelly Kube have the following clients:
 - [Visual Studio Code extension](https://github.com/VitorOriel/smelly-kube-vscode-plugin)
 
 ## Running Smelly Kube
-You can either run the server directly through golang or via Dockefile. To run using go:
+You can either run the server directly through golang or via Docker.
+
+**Run using Docker**:
+To run the application using Docker, just run `docker compose up server`
+
+**Run directly using go**:
 1. `cd security-smells-api/`
 2. `go mod tidy`
 3. `go run main.go`
