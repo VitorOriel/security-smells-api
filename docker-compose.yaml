@@ -12,6 +12,8 @@ services:
     build:
       context: .
       target: final
+    volumes:
+      - ~/go/bin/:/go/pkg/
     ports:
       - 3000:3000
 
