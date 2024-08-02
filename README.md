@@ -20,6 +20,10 @@ To run the application using Docker, just run `docker compose up server`
 
 The server uses the localhost with port `3000`.
 
+## Operating System
+
+The server was developed under Ubuntu 22.04.4 LTS
+
 ## Technologies
 
 - Golang v1.22
