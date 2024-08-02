@@ -23,6 +23,7 @@ The server uses the localhost with port `3000`.
 ## Technologies
 
 - Golang v1.22
+- Docker v24.0.5
 
 ## Dependencies
 
