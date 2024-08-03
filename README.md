@@ -84,7 +84,7 @@ The dependencies can be seen in [go.mod](security-smells-api/go.mod) file
 }
 ```
 
-#### Response 401 - Bad Request
+#### Response 400 - Bad Request
 ```json
 {
   "message": "Empty file"
