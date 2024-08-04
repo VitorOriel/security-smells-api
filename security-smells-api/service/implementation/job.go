@@ -18,7 +18,7 @@ type Job struct {
 func (job *Job) SmellySecurityContextAllowPrivilegeEscalation() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET))
 		}
 	}
 }
@@ -26,7 +26,7 @@ func (job *Job) SmellySecurityContextAllowPrivilegeEscalation() {
 func (job *Job) SmellySecurityContextCapabilities() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_CAPABILITIES))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_CAPABILITIES_UNSET))
 		}
 	}
 }
@@ -34,7 +34,7 @@ func (job *Job) SmellySecurityContextCapabilities() {
 func (job *Job) SmellySecurityContextRunAsUser() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RUNASUSER))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RUNASUSER_UNSET))
 		}
 	}
 }
@@ -42,10 +42,10 @@ func (job *Job) SmellySecurityContextRunAsUser() {
 func (job *Job) SmellyResourceAndLimit() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.Resources.Requests == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RESREQUESTS))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RESREQUESTS_UNSET))
 		}
 		if container.Resources.Limits == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RESLIMITS))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_RESLIMITS_UNSET))
 		}
 	}
 }
@@ -53,7 +53,7 @@ func (job *Job) SmellyResourceAndLimit() {
 func (job *Job) SmellySecurityContextReadOnlyRootFilesystem() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_ROROOTFS))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_ROROOTFS_UNSET))
 		}
 	}
 }
@@ -61,7 +61,7 @@ func (job *Job) SmellySecurityContextReadOnlyRootFilesystem() {
 func (job *Job) SmellySecurityContextPrivileged() {
 	for _, container := range job.Job.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+			job.SmellKubernetes = append(job.SmellKubernetes, models.NewSmellKubernetes(job.Job, job.Job.GetObjectKind(), &container, job.WorkloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET))
 		}
 	}
 }

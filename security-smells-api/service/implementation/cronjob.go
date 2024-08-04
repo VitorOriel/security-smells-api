@@ -18,7 +18,7 @@ type CronJob struct {
 func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET))
 		}
 	}
 }
@@ -26,7 +26,7 @@ func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {
 func (cronJob *CronJob) SmellySecurityContextCapabilities() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_CAPABILITIES))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_CAPABILITIES_UNSET))
 		}
 	}
 }
@@ -34,7 +34,7 @@ func (cronJob *CronJob) SmellySecurityContextCapabilities() {
 func (cronJob *CronJob) SmellySecurityContextRunAsUser() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RUNASUSER))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RUNASUSER_UNSET))
 		}
 	}
 }
@@ -42,10 +42,10 @@ func (cronJob *CronJob) SmellySecurityContextRunAsUser() {
 func (cronJob *CronJob) SmellyResourceAndLimit() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.Resources.Requests == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESREQUESTS))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESREQUESTS_UNSET))
 		}
 		if container.Resources.Limits == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESLIMITS))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESLIMITS_UNSET))
 		}
 	}
 }
@@ -53,7 +53,7 @@ func (cronJob *CronJob) SmellyResourceAndLimit() {
 func (cronJob *CronJob) SmellySecurityContextReadOnlyRootFilesystem() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_ROROOTFS))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_ROROOTFS_UNSET))
 		}
 	}
 }
@@ -61,7 +61,7 @@ func (cronJob *CronJob) SmellySecurityContextReadOnlyRootFilesystem() {
 func (cronJob *CronJob) SmellySecurityContextPrivileged() {
 	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVILEGED))
+			cronJob.SmellKubernetes = append(cronJob.SmellKubernetes, models.NewSmellKubernetes(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET))
 		}
 	}
 }

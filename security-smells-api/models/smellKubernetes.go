@@ -43,25 +43,25 @@ func NewSmellKubernetes(
 
 func (smellKubernetes *SmellKubernetes) setMessageAndSuggestionByRule(container *corev1.Container, rule constants.KubernetesRule) {
 	switch rule {
-	case constants.K8S_SEC_PRIVESCALATION:
+	case constants.K8S_SEC_PRIVESCALATION_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("AllowPrivilegeEscalation not set into %s your container is running with AllowPrivilegeEscalation", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add AllowPrivilegeEscalation into %s to avoid running with AllowPrivilegeEscalation", container.Name)
-	case constants.K8S_SEC_CAPABILITIES:
+	case constants.K8S_SEC_CAPABILITIES_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("Capabilities not set into %s your container is running without Capabilities", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add Capabilities into %s to avoid running without Capabilities", container.Name)
-	case constants.K8S_SEC_RUNASUSER:
+	case constants.K8S_SEC_RUNASUSER_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("RunAsUser not set into %s your container is running with root user", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add RunAsUser into %s to avoid running with root user", container.Name)
-	case constants.K8S_SEC_RESREQUESTS:
+	case constants.K8S_SEC_RESREQUESTS_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("Resources.Requests not set into %s your container is running without Resources.Requests", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add Resources.Requests into %s to avoid running without Resources.Requests", container.Name)
-	case constants.K8S_SEC_RESLIMITS:
+	case constants.K8S_SEC_RESLIMITS_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("Resource.Limits not set into %s your container is running without Resource.Limits", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add Resource.Limits into %s to avoid running without Resource.Limits", container.Name)
-	case constants.K8S_SEC_ROROOTFS:
+	case constants.K8S_SEC_ROROOTFS_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("ReadOnlyRootFilesystem not set into %s your container is running with ReadWriteRootFilesystem", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add ReadOnlyRootFilesystem into %s to avoid running with ReadWriteRootFilesystem", container.Name)
-	case constants.K8S_SEC_PRIVILEGED:
+	case constants.K8S_SEC_PRIVILEGED_UNSET:
 		smellKubernetes.Message = fmt.Sprintf("Privileged not set into %s your container is running with Privileged", container.Name)
 		smellKubernetes.Suggestion = fmt.Sprintf("Please add Privileged into %s to avoid running with Privileged", container.Name)
 	}
