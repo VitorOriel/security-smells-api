@@ -12,6 +12,7 @@ import (
 
 type K8sWorkload interface {
 	GetKubernetesSmells() []*models.KubernetesSmell
+	AddKubernetesSmell(*models.KubernetesSmell)
 	SmellySecurityContextRunAsUser(*corev1.PodSpec)
 	SmellySecurityContextCapabilities(*corev1.PodSpec)
 	SmellySecurityContextAllowPrivilegeEscalation(*corev1.PodSpec)
@@ -33,6 +34,10 @@ func NewK8sWorkload(workloadPosition int) K8sWorkload {
 
 func (w *k8sWorkload) GetKubernetesSmells() []*models.KubernetesSmell {
 	return w.kubernetesSmells
+}
+
+func (w *k8sWorkload) AddKubernetesSmell(smell *models.KubernetesSmell) {
+	w.kubernetesSmells = append(w.kubernetesSmells, smell)
 }
 
 func (w *k8sWorkload) SmellySecurityContextRunAsUser(spec *corev1.PodSpec) {
@@ -68,42 +73,72 @@ func (w *k8sWorkload) SmellySecurityContextCapabilities(spec *corev1.PodSpec) {
 }
 
 func (w *k8sWorkload) SmellySecurityContextAllowPrivilegeEscalation(spec *corev1.PodSpec) {
-	if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-		w.kubernetesSmells = append(
-			w.kubernetesSmells,
-			models.NewKubernetesSmell(w.object, w.kind, container, w.workloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET),
-		)
-		return
-	}
-	if *container.SecurityContext.AllowPrivilegeEscalation {
-		w.kubernetesSmells = append(
-			w.kubernetesSmells,
-			models.NewKubernetesSmell(w.object, w.kind, container, w.workloadPosition, constants.K8S_SEC_PRIVESCALATION_VALUE),
-		)
+	for _, container := range spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET),
+			)
+			continue
+		}
+		if *container.SecurityContext.AllowPrivilegeEscalation {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_PRIVESCALATION_VALUE),
+			)
+		}
 	}
 }
 
 func (w *k8sWorkload) SmellySecurityContextReadOnlyRootFilesystem(spec *corev1.PodSpec) {
-	if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-		w.kubernetesSmells = append(
-			w.kubernetesSmells,
-			models.NewKubernetesSmell(w.object, w.kind, container, w.workloadPosition, constants.K8S_SEC_ROROOTFS_UNSET),
-		)
-		return
-	}
-	if !*container.SecurityContext.ReadOnlyRootFilesystem {
-		w.kubernetesSmells = append(
-			w.kubernetesSmells,
-			models.NewKubernetesSmell(w.object, w.kind, container, w.workloadPosition, constants.K8S_SEC_ROROOTFS_VALUE),
-		)
+	for _, container := range spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_ROROOTFS_UNSET),
+			)
+			continue
+		}
+		if !*container.SecurityContext.ReadOnlyRootFilesystem {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_ROROOTFS_VALUE),
+			)
+		}
 	}
 }
 
 func (w *k8sWorkload) SmellySecurityContextPrivileged(spec *corev1.PodSpec) {
-	if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-		w.kubernetesSmells = append(
-			w.kubernetesSmells,
-			models.NewKubernetesSmell(w.object, w.kind, container, w.workloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET),
-		)
+	for _, container := range spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET),
+			)
+			continue
+		}
+		if *container.SecurityContext.Privileged {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_PRIVILEGED_VALUE),
+			)
+		}
+	}
+}
+
+func (w *k8sWorkload) SmellyResourceAndLimit(spec *corev1.PodSpec) {
+	for _, container := range spec.Containers {
+		if container.Resources.Requests == nil {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RESREQUESTS_UNSET),
+			)
+		}
+		if container.Resources.Limits == nil {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RESLIMITS_UNSET),
+			)
+		}
 	}
 }
