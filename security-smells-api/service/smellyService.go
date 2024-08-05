@@ -73,17 +73,14 @@ func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.St
 func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, deployment := range deployments {
-		d := &k8s.Deployment{
-			Deployment:       &deployment,
-			WorkloadPosition: workloadPosition[i],
-		}
+		d := k8s.NewDeployment(&deployment, workloadPosition[i])
 		d.SmellyResourceAndLimit()
 		d.SmellySecurityContextRunAsUser()
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
 		d.SmellySecurityContextPrivileged()
-		smells = append(smells, d.KubernetesSmell...)
+		smells = append(smells, d.GetKubernetesSmells()...)
 	}
 	return smells
 }
