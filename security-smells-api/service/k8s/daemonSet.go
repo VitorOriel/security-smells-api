@@ -1,65 +1,45 @@
 package k8s
 
 import (
-	"security-smells-api/constants"
-	"security-smells-api/models"
-
 	appsv1 "k8s.io/api/apps/v1"
 )
 
-type DaemonSet struct {
-	DaemonSet        *appsv1.DaemonSet
-	WorkloadPosition int
-	KubernetesSmell  []*models.KubernetesSmell
+type DaemonSet interface {
+	K8sWorkload
 }
 
-func (daemonSet *DaemonSet) SmellySecurityContextReadOnlyRootFilesystem() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_ROROOTFS_UNSET))
-		}
+type daemonSet struct {
+	*k8sWorkload
+	DaemonSet *appsv1.DaemonSet
+}
+
+func NewDaemonSet(object *appsv1.DaemonSet, workloadPosition int) DaemonSet {
+	return &daemonSet{
+		k8sWorkload: NewK8sWorkload(object, object.GetObjectKind(), workloadPosition),
+		DaemonSet:   object,
 	}
 }
 
-func (daemonSet *DaemonSet) SmellySecurityContextAllowPrivilegeEscalation() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET))
-		}
-	}
+func (d *daemonSet) SmellySecurityContextReadOnlyRootFilesystem() {
+	d.k8sWorkload.SmellySecurityContextReadOnlyRootFilesystem(&d.DaemonSet.Spec.Template.Spec)
 }
 
-func (daemonSet *DaemonSet) SmellySecurityContextCapabilities() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_CAPABILITIES_UNSET))
-		}
-	}
+func (d *daemonSet) SmellySecurityContextAllowPrivilegeEscalation() {
+	d.k8sWorkload.SmellySecurityContextAllowPrivilegeEscalation(&d.DaemonSet.Spec.Template.Spec)
 }
 
-func (daemonSet *DaemonSet) SmellySecurityContextPrivileged() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET))
-		}
-	}
+func (d *daemonSet) SmellySecurityContextCapabilities() {
+	d.k8sWorkload.SmellySecurityContextCapabilities(&d.DaemonSet.Spec.Template.Spec)
 }
 
-func (daemonSet *DaemonSet) SmellySecurityContextRunAsUser() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_RUNASUSER_UNSET))
-		}
-	}
+func (d *daemonSet) SmellySecurityContextPrivileged() {
+	d.k8sWorkload.SmellySecurityContextPrivileged(&d.DaemonSet.Spec.Template.Spec)
 }
 
-func (daemonSet *DaemonSet) SmellyResourceAndLimit() {
-	for _, container := range daemonSet.DaemonSet.Spec.Template.Spec.Containers {
-		if container.Resources.Requests == nil || container.Resources.Limits == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_RESREQUESTS_UNSET))
-		}
-		if container.Resources.Limits == nil {
-			daemonSet.KubernetesSmell = append(daemonSet.KubernetesSmell, models.NewKubernetesSmell(daemonSet.DaemonSet, daemonSet.DaemonSet.GetObjectKind(), &container, daemonSet.WorkloadPosition, constants.K8S_SEC_RESLIMITS_UNSET))
-		}
-	}
+func (d *daemonSet) SmellySecurityContextRunAsUser() {
+	d.k8sWorkload.SmellySecurityContextRunAsUser(&d.DaemonSet.Spec.Template.Spec)
+}
+
+func (d *daemonSet) SmellyResourceAndLimit() {
+	d.k8sWorkload.SmellyResourceAndLimit(&d.DaemonSet.Spec.Template.Spec)
 }

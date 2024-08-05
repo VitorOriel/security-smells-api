@@ -12,13 +12,12 @@ import (
 
 type K8sWorkload interface {
 	GetKubernetesSmells() []*models.KubernetesSmell
-	AddKubernetesSmell(*models.KubernetesSmell)
-	SmellySecurityContextRunAsUser(*corev1.PodSpec)
-	SmellySecurityContextCapabilities(*corev1.PodSpec)
-	SmellySecurityContextAllowPrivilegeEscalation(*corev1.PodSpec)
-	SmellySecurityContextReadOnlyRootFilesystem(*corev1.PodSpec)
-	SmellySecurityContextPrivileged(*corev1.PodSpec)
-	SmellyResourceAndLimit(*corev1.PodSpec)
+	SmellyResourceAndLimit()
+	SmellySecurityContextRunAsUser()
+	SmellySecurityContextCapabilities()
+	SmellySecurityContextAllowPrivilegeEscalation()
+	SmellySecurityContextReadOnlyRootFilesystem()
+	SmellySecurityContextPrivileged()
 }
 
 type k8sWorkload struct {
@@ -28,8 +27,12 @@ type k8sWorkload struct {
 	kubernetesSmells []*models.KubernetesSmell
 }
 
-func NewK8sWorkload(workloadPosition int) K8sWorkload {
-	return &k8sWorkload{workloadPosition: workloadPosition}
+func NewK8sWorkload(object metav1.Object, kind schema.ObjectKind, workloadPosition int) *k8sWorkload {
+	return &k8sWorkload{
+		object:           object,
+		kind:             kind,
+		workloadPosition: workloadPosition,
+	}
 }
 
 func (w *k8sWorkload) GetKubernetesSmells() []*models.KubernetesSmell {
