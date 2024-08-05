@@ -22,17 +22,14 @@ type SmellyService struct {
 func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, replicaSet := range replicaSets {
-		r := &k8s.ReplicaSet{
-			ReplicaSet:       &replicaSet,
-			WorkloadPosition: workloadPosition[i],
-		}
+		r := k8s.NewReplicaSet(&replicaSet, workloadPosition[i])
 		r.SmellyResourceAndLimit()
 		r.SmellySecurityContextRunAsUser()
 		r.SmellySecurityContextCapabilities()
 		r.SmellySecurityContextAllowPrivilegeEscalation()
 		r.SmellySecurityContextReadOnlyRootFilesystem()
 		r.SmellySecurityContextPrivileged()
-		smells = append(smells, r.KubernetesSmell...)
+		smells = append(smells, r.GetKubernetesSmells()...)
 	}
 	return smells
 }
