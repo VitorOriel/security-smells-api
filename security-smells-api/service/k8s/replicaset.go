@@ -4,9 +4,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 )
 
-// type ReplicaSet struct {
-// 	ReplicaSet       *appsv1.ReplicaSet
-
 type ReplicaSet interface {
 	K8sWorkload
 }
