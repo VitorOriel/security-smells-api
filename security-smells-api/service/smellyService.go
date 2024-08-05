@@ -106,17 +106,14 @@ func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosit
 func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, job := range jobs {
-		j := &k8s.Job{
-			Job:              &job,
-			WorkloadPosition: workloadPosition[i],
-		}
+		j := k8s.NewJob(&job, workloadPosition[i])
 		j.SmellyResourceAndLimit()
 		j.SmellySecurityContextRunAsUser()
 		j.SmellySecurityContextCapabilities()
 		j.SmellySecurityContextAllowPrivilegeEscalation()
 		j.SmellySecurityContextReadOnlyRootFilesystem()
 		j.SmellySecurityContextPrivileged()
-		smells = append(smells, j.KubernetesSmell...)
+		smells = append(smells, j.GetKubernetesSmells()...)
 	}
 	return smells
 }
