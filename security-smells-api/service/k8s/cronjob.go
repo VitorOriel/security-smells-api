@@ -1,65 +1,45 @@
 package k8s
 
 import (
-	"security-smells-api/constants"
-	"security-smells-api/models"
-
 	batchv1 "k8s.io/api/batch/v1"
 )
 
-type CronJob struct {
-	CronJob          *batchv1.CronJob
-	WorkloadPosition int
-	KubernetesSmell  []*models.KubernetesSmell
+type CronJob interface {
+	K8sWorkload
 }
 
-func (cronJob *CronJob) SmellySecurityContextAllowPrivilegeEscalation() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.AllowPrivilegeEscalation == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVESCALATION_UNSET))
-		}
+type cronJob struct {
+	*k8sWorkload
+	CronJob *batchv1.CronJob
+}
+
+func NewCronJob(object *batchv1.CronJob, workloadPosition int) CronJob {
+	return &cronJob{
+		k8sWorkload: NewK8sWorkload(object, object.GetObjectKind(), workloadPosition),
+		CronJob:     object,
 	}
 }
 
-func (cronJob *CronJob) SmellySecurityContextCapabilities() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.Capabilities == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_CAPABILITIES_UNSET))
-		}
-	}
+func (c *cronJob) SmellySecurityContextReadOnlyRootFilesystem() {
+	c.k8sWorkload.SmellySecurityContextReadOnlyRootFilesystem(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }
 
-func (cronJob *CronJob) SmellySecurityContextRunAsUser() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RUNASUSER_UNSET))
-		}
-	}
+func (c *cronJob) SmellySecurityContextAllowPrivilegeEscalation() {
+	c.k8sWorkload.SmellySecurityContextAllowPrivilegeEscalation(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }
 
-func (cronJob *CronJob) SmellyResourceAndLimit() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.Resources.Requests == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESREQUESTS_UNSET))
-		}
-		if container.Resources.Limits == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_RESLIMITS_UNSET))
-		}
-	}
+func (c *cronJob) SmellySecurityContextCapabilities() {
+	c.k8sWorkload.SmellySecurityContextCapabilities(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }
 
-func (cronJob *CronJob) SmellySecurityContextReadOnlyRootFilesystem() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.ReadOnlyRootFilesystem == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_ROROOTFS_UNSET))
-		}
-	}
+func (c *cronJob) SmellySecurityContextPrivileged() {
+	c.k8sWorkload.SmellySecurityContextPrivileged(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }
 
-func (cronJob *CronJob) SmellySecurityContextPrivileged() {
-	for _, container := range cronJob.CronJob.Spec.JobTemplate.Spec.Template.Spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-			cronJob.KubernetesSmell = append(cronJob.KubernetesSmell, models.NewKubernetesSmell(cronJob.CronJob, cronJob.CronJob.GetObjectKind(), &container, cronJob.WorkloadPosition, constants.K8S_SEC_PRIVILEGED_UNSET))
-		}
-	}
+func (c *cronJob) SmellySecurityContextRunAsUser() {
+	c.k8sWorkload.SmellySecurityContextRunAsUser(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
+}
+
+func (c *cronJob) SmellyResourceAndLimit() {
+	c.k8sWorkload.SmellyResourceAndLimit(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }

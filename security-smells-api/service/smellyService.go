@@ -127,17 +127,14 @@ func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosi
 func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, cronJob := range cronJobs {
-		c := &k8s.CronJob{
-			CronJob:          &cronJob,
-			WorkloadPosition: workloadPosition[i],
-		}
+		c := k8s.NewCronJob(&cronJob, workloadPosition[i])
 		c.SmellyResourceAndLimit()
 		c.SmellySecurityContextRunAsUser()
 		c.SmellySecurityContextCapabilities()
 		c.SmellySecurityContextAllowPrivilegeEscalation()
 		c.SmellySecurityContextReadOnlyRootFilesystem()
 		c.SmellySecurityContextPrivileged()
-		smells = append(smells, c.KubernetesSmell...)
+		smells = append(smells, c.GetKubernetesSmells()...)
 	}
 	return smells
 }
