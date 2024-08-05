@@ -52,17 +52,14 @@ func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.Daemon
 func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, statefulSet := range statefulSets {
-		s := &k8s.StatefulSet{
-			StatefulSet:      &statefulSet,
-			WorkloadPosition: workloadPosition[i],
-		}
+		s := k8s.NewStatefulSet(&statefulSet, workloadPosition[i])
 		s.SmellyResourceAndLimit()
 		s.SmellySecurityContextRunAsUser()
 		s.SmellySecurityContextCapabilities()
 		s.SmellySecurityContextAllowPrivilegeEscalation()
 		s.SmellySecurityContextReadOnlyRootFilesystem()
 		s.SmellySecurityContextPrivileged()
-		smells = append(smells, s.KubernetesSmell...)
+		smells = append(smells, s.GetKubernetesSmells()...)
 	}
 	return smells
 }
