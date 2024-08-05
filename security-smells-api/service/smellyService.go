@@ -88,17 +88,14 @@ func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Depl
 func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) []*models.KubernetesSmell {
 	smells := []*models.KubernetesSmell{}
 	for i, pod := range pods {
-		p := &k8s.Pod{
-			Pod:              &pod,
-			WorkloadPosition: workloadPosition[i],
-		}
+		p := k8s.NewPod(&pod, workloadPosition[i])
 		p.SmellyResourceAndLimit()
 		p.SmellySecurityContextRunAsUser()
 		p.SmellySecurityContextCapabilities()
 		p.SmellySecurityContextAllowPrivilegeEscalation()
 		p.SmellySecurityContextReadOnlyRootFilesystem()
 		p.SmellySecurityContextPrivileged()
-		smells = append(smells, p.KubernetesSmell...)
+		smells = append(smells, p.GetKubernetesSmells()...)
 	}
 	return smells
 }
