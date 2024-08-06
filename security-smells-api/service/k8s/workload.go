@@ -44,14 +44,21 @@ func (w *k8sWorkload) AddKubernetesSmell(smell *models.KubernetesSmell) {
 }
 
 func (w *k8sWorkload) SmellySecurityContextRunAsUser(spec *corev1.PodSpec) {
-	if spec.SecurityContext != nil && spec.SecurityContext.RunAsUser != nil {
-		return
-	}
+	isSetAtPodLevel := spec.SecurityContext != nil && spec.SecurityContext.RunAsUser != nil && *spec.SecurityContext.RunAsUser > 0
 	for _, container := range spec.Containers {
 		if container.SecurityContext == nil || container.SecurityContext.RunAsUser == nil {
+			if !isSetAtPodLevel {
+				w.kubernetesSmells = append(
+					w.kubernetesSmells,
+					models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASUSER_UNSET),
+				)
+			}
+			continue
+		}
+		if *container.SecurityContext.RunAsUser == 0 {
 			w.kubernetesSmells = append(
 				w.kubernetesSmells,
-				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASUSER_UNSET),
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASUSER_VALUE),
 			)
 		}
 	}
