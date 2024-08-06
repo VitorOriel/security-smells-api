@@ -120,10 +120,7 @@ func (w *k8sWorkload) SmellySecurityContextReadOnlyRootFilesystem(spec *corev1.P
 
 func (w *k8sWorkload) SmellySecurityContextPrivileged(spec *corev1.PodSpec) {
 	for _, container := range spec.Containers {
-		if container.SecurityContext == nil || container.SecurityContext.Privileged == nil {
-			continue
-		}
-		if *container.SecurityContext.Privileged {
+		if container.SecurityContext != nil || container.SecurityContext.Privileged != nil && *container.SecurityContext.Privileged {
 			w.kubernetesSmells = append(
 				w.kubernetesSmells,
 				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_PRIVILEGED_VALUE),
