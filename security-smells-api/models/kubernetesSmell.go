@@ -52,6 +52,9 @@ func (kubernetesSmell *KubernetesSmell) setMessageAndSuggestionByRule(container 
 	case constants.K8S_SEC_RUNASUSER_UNSET:
 		kubernetesSmell.Message = fmt.Sprintf("RunAsUser not set into %s your container is running with root user", container.Name)
 		kubernetesSmell.Suggestion = fmt.Sprintf("Please add RunAsUser into %s to avoid running with root user", container.Name)
+	case constants.K8S_SEC_RUNASNONROOT_UNSET:
+		kubernetesSmell.Message = fmt.Sprintf("RunAsNonRoot not set into %s your container may run with root user", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("Please add RunAsNonRoot into %s to avoid running with root user", container.Name)
 	case constants.K8S_SEC_RESREQUESTS_UNSET:
 		kubernetesSmell.Message = fmt.Sprintf("Resources.Requests not set into %s your container is running without Resources.Requests", container.Name)
 		kubernetesSmell.Suggestion = fmt.Sprintf("Please add Resources.Requests into %s to avoid running without Resources.Requests", container.Name)

@@ -14,6 +14,7 @@ type K8sWorkload interface {
 	GetKubernetesSmells() []*models.KubernetesSmell
 	SmellyResourceAndLimit()
 	SmellySecurityContextRunAsUser()
+	SmellySecurityContextRunAsNonRoot()
 	SmellySecurityContextCapabilities()
 	SmellySecurityContextAllowPrivilegeEscalation()
 	SmellySecurityContextReadOnlyRootFilesystem()
@@ -59,6 +60,27 @@ func (w *k8sWorkload) SmellySecurityContextRunAsUser(spec *corev1.PodSpec) {
 			w.kubernetesSmells = append(
 				w.kubernetesSmells,
 				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASUSER_VALUE),
+			)
+		}
+	}
+}
+
+func (w *k8sWorkload) SmellySecurityContextRunAsNonRoot(spec *corev1.PodSpec) {
+	isSetAtPodLevel := spec.SecurityContext != nil && spec.SecurityContext.RunAsNonRoot != nil && *spec.SecurityContext.RunAsNonRoot
+	for _, container := range spec.Containers {
+		if container.SecurityContext == nil || container.SecurityContext.RunAsNonRoot == nil {
+			if !isSetAtPodLevel {
+				w.kubernetesSmells = append(
+					w.kubernetesSmells,
+					models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASNONROOT_UNSET),
+				)
+			}
+			continue
+		}
+		if !*container.SecurityContext.RunAsNonRoot {
+			w.kubernetesSmells = append(
+				w.kubernetesSmells,
+				models.NewKubernetesSmell(w.object, w.kind, &container, w.workloadPosition, constants.K8S_SEC_RUNASNONROOT_VALUE),
 			)
 		}
 	}

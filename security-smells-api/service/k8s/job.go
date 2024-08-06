@@ -40,6 +40,10 @@ func (j *job) SmellySecurityContextRunAsUser() {
 	j.k8sWorkload.SmellySecurityContextRunAsUser(&j.Job.Spec.Template.Spec)
 }
 
+func (j *job) SmellySecurityContextRunAsNonRoot() {
+	j.k8sWorkload.SmellySecurityContextRunAsNonRoot(&j.Job.Spec.Template.Spec)
+}
+
 func (j *job) SmellyResourceAndLimit() {
 	j.k8sWorkload.SmellyResourceAndLimit(&j.Job.Spec.Template.Spec)
 }

@@ -40,6 +40,10 @@ func (d *daemonSet) SmellySecurityContextRunAsUser() {
 	d.k8sWorkload.SmellySecurityContextRunAsUser(&d.DaemonSet.Spec.Template.Spec)
 }
 
+func (d *daemonSet) SmellySecurityContextRunAsNonRoot() {
+	d.k8sWorkload.SmellySecurityContextRunAsNonRoot(&d.DaemonSet.Spec.Template.Spec)
+}
+
 func (d *daemonSet) SmellyResourceAndLimit() {
 	d.k8sWorkload.SmellyResourceAndLimit(&d.DaemonSet.Spec.Template.Spec)
 }

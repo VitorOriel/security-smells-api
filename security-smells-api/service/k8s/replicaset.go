@@ -40,6 +40,10 @@ func (r *replicaSet) SmellySecurityContextRunAsUser() {
 	r.k8sWorkload.SmellySecurityContextRunAsUser(&r.ReplicaSet.Spec.Template.Spec)
 }
 
+func (r *replicaSet) SmellySecurityContextRunAsNonRoot() {
+	r.k8sWorkload.SmellySecurityContextRunAsNonRoot(&r.ReplicaSet.Spec.Template.Spec)
+}
+
 func (r *replicaSet) SmellyResourceAndLimit() {
 	r.k8sWorkload.SmellyResourceAndLimit(&r.ReplicaSet.Spec.Template.Spec)
 }

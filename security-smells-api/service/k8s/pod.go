@@ -40,6 +40,10 @@ func (p *pod) SmellySecurityContextRunAsUser() {
 	p.k8sWorkload.SmellySecurityContextRunAsUser(&p.Pod.Spec)
 }
 
+func (p *pod) SmellySecurityContextRunAsNonRoot() {
+	p.k8sWorkload.SmellySecurityContextRunAsNonRoot(&p.Pod.Spec)
+}
+
 func (p *pod) SmellyResourceAndLimit() {
 	p.k8sWorkload.SmellyResourceAndLimit(&p.Pod.Spec)
 }

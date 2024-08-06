@@ -40,6 +40,10 @@ func (c *cronJob) SmellySecurityContextRunAsUser() {
 	c.k8sWorkload.SmellySecurityContextRunAsUser(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }
 
+func (c *cronJob) SmellySecurityContextRunAsNonRoot() {
+	c.k8sWorkload.SmellySecurityContextRunAsNonRoot(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
+}
+
 func (c *cronJob) SmellyResourceAndLimit() {
 	c.k8sWorkload.SmellyResourceAndLimit(&c.CronJob.Spec.JobTemplate.Spec.Template.Spec)
 }

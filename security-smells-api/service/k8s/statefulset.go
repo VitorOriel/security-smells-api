@@ -40,6 +40,10 @@ func (s *statefulSet) SmellySecurityContextRunAsUser() {
 	s.k8sWorkload.SmellySecurityContextRunAsUser(&s.StatefulSet.Spec.Template.Spec)
 }
 
+func (s *statefulSet) SmellySecurityContextRunAsNonRoot() {
+	s.k8sWorkload.SmellySecurityContextRunAsNonRoot(&s.StatefulSet.Spec.Template.Spec)
+}
+
 func (s *statefulSet) SmellyResourceAndLimit() {
 	s.k8sWorkload.SmellyResourceAndLimit(&s.StatefulSet.Spec.Template.Spec)
 }
