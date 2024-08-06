@@ -61,8 +61,8 @@ func (kubernetesSmell *KubernetesSmell) setMessageAndSuggestionByRule(container 
 	case constants.K8S_SEC_ROROOTFS_UNSET:
 		kubernetesSmell.Message = fmt.Sprintf("ReadOnlyRootFilesystem not set into %s your container is running with ReadWriteRootFilesystem", container.Name)
 		kubernetesSmell.Suggestion = fmt.Sprintf("Please add ReadOnlyRootFilesystem into %s to avoid running with ReadWriteRootFilesystem", container.Name)
-	case constants.K8S_SEC_PRIVILEGED_UNSET:
-		kubernetesSmell.Message = fmt.Sprintf("Privileged not set into %s your container is running with Privileged", container.Name)
-		kubernetesSmell.Suggestion = fmt.Sprintf("Please add Privileged into %s to avoid running with Privileged", container.Name)
+	case constants.K8S_SEC_PRIVILEGED_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("Privileged setted to 'true' into %s your container is running with Privileged", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("Please add 'privileged: false' into %s to avoid running with Privileged", container.Name)
 	}
 }
