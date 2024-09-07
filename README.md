@@ -71,7 +71,7 @@ The dependencies can be seen in [go.mod](security-smells-api/go.mod) file
       "workload_kind": "Deployment",
       "workload_label_name": "example",
       "workload_position": 0,
-      "rule": "K8S_SEC_RUNASUSER",
+      "rule": "K8S_SEC_RUNASUSER_UNSET",
       "message": "RunAsUser not set",
       "suggestion": "Set RunAsUser",
     }],

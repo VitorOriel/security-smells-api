@@ -5,7 +5,7 @@ import (
 	"security-smells-api/constants"
 	"security-smells-api/models"
 	"security-smells-api/repository"
-	"security-smells-api/service/implementation"
+	"security-smells-api/service/k8s"
 	"strings"
 
 	"github.com/gofiber/fiber/v2/log"
@@ -19,128 +19,114 @@ type SmellyService struct {
 	SmellyRepository repository.SmellyRepository
 }
 
-func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindReplicaSetSmell(replicaSets []appsv1.ReplicaSet, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, replicaSet := range replicaSets {
-		r := &implementation.ReplicaSet{
-			ReplicaSet:       &replicaSet,
-			WorkloadPosition: workloadPosition[i],
-		}
+		r := k8s.NewReplicaSet(&replicaSet, workloadPosition[i])
 		r.SmellyResourceAndLimit()
 		r.SmellySecurityContextRunAsUser()
+		r.SmellySecurityContextRunAsNonRoot()
 		r.SmellySecurityContextCapabilities()
 		r.SmellySecurityContextAllowPrivilegeEscalation()
 		r.SmellySecurityContextReadOnlyRootFilesystem()
 		r.SmellySecurityContextPrivileged()
-		smells = append(smells, r.SmellKubernetes...)
+		smells = append(smells, r.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindDaemonSetSmell(daemonSets []appsv1.DaemonSet, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, daemonSet := range daemonSets {
-		d := &implementation.DaemonSet{
-			DaemonSet:        &daemonSet,
-			WorkloadPosition: workloadPosition[i],
-		}
+		d := k8s.NewDaemonSet(&daemonSet, workloadPosition[i])
 		d.SmellyResourceAndLimit()
 		d.SmellySecurityContextRunAsUser()
+		d.SmellySecurityContextRunAsNonRoot()
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
 		d.SmellySecurityContextPrivileged()
-		smells = append(smells, d.SmellKubernetes...)
+		smells = append(smells, d.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindStatefulSetSmell(statefulSets []appsv1.StatefulSet, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, statefulSet := range statefulSets {
-		s := &implementation.StatefulSet{
-			StatefulSet:      &statefulSet,
-			WorkloadPosition: workloadPosition[i],
-		}
+		s := k8s.NewStatefulSet(&statefulSet, workloadPosition[i])
 		s.SmellyResourceAndLimit()
 		s.SmellySecurityContextRunAsUser()
+		s.SmellySecurityContextRunAsNonRoot()
 		s.SmellySecurityContextCapabilities()
 		s.SmellySecurityContextAllowPrivilegeEscalation()
 		s.SmellySecurityContextReadOnlyRootFilesystem()
 		s.SmellySecurityContextPrivileged()
-		smells = append(smells, s.SmellKubernetes...)
+		smells = append(smells, s.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindDeploymentSmell(deployments []appsv1.Deployment, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, deployment := range deployments {
-		d := &implementation.Deployment{
-			Deployment:       &deployment,
-			WorkloadPosition: workloadPosition[i],
-		}
+		d := k8s.NewDeployment(&deployment, workloadPosition[i])
 		d.SmellyResourceAndLimit()
 		d.SmellySecurityContextRunAsUser()
+		d.SmellySecurityContextRunAsNonRoot()
 		d.SmellySecurityContextCapabilities()
 		d.SmellySecurityContextAllowPrivilegeEscalation()
 		d.SmellySecurityContextReadOnlyRootFilesystem()
 		d.SmellySecurityContextPrivileged()
-		smells = append(smells, d.SmellKubernetes...)
+		smells = append(smells, d.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindPodSmell(pods []corev1.Pod, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, pod := range pods {
-		p := &implementation.Pod{
-			Pod:              &pod,
-			WorkloadPosition: workloadPosition[i],
-		}
+		p := k8s.NewPod(&pod, workloadPosition[i])
 		p.SmellyResourceAndLimit()
 		p.SmellySecurityContextRunAsUser()
+		p.SmellySecurityContextRunAsNonRoot()
 		p.SmellySecurityContextCapabilities()
 		p.SmellySecurityContextAllowPrivilegeEscalation()
 		p.SmellySecurityContextReadOnlyRootFilesystem()
 		p.SmellySecurityContextPrivileged()
-		smells = append(smells, p.SmellKubernetes...)
+		smells = append(smells, p.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindJobSmell(jobs []batchv1.Job, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, job := range jobs {
-		j := &implementation.Job{
-			Job:              &job,
-			WorkloadPosition: workloadPosition[i],
-		}
+		j := k8s.NewJob(&job, workloadPosition[i])
 		j.SmellyResourceAndLimit()
 		j.SmellySecurityContextRunAsUser()
+		j.SmellySecurityContextRunAsNonRoot()
 		j.SmellySecurityContextCapabilities()
 		j.SmellySecurityContextAllowPrivilegeEscalation()
 		j.SmellySecurityContextReadOnlyRootFilesystem()
 		j.SmellySecurityContextPrivileged()
-		smells = append(smells, j.SmellKubernetes...)
+		smells = append(smells, j.GetKubernetesSmells()...)
 	}
 	return smells
 }
 
-func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) []*models.SmellKubernetes {
-	smells := []*models.SmellKubernetes{}
+func (smellyService SmellyService) FindCronJobSmell(cronJobs []batchv1.CronJob, workloadPosition []int) []*models.KubernetesSmell {
+	smells := []*models.KubernetesSmell{}
 	for i, cronJob := range cronJobs {
-		c := &implementation.CronJob{
-			CronJob:          &cronJob,
-			WorkloadPosition: workloadPosition[i],
-		}
+		c := k8s.NewCronJob(&cronJob, workloadPosition[i])
 		c.SmellyResourceAndLimit()
 		c.SmellySecurityContextRunAsUser()
+		c.SmellySecurityContextRunAsNonRoot()
 		c.SmellySecurityContextCapabilities()
 		c.SmellySecurityContextAllowPrivilegeEscalation()
 		c.SmellySecurityContextReadOnlyRootFilesystem()
 		c.SmellySecurityContextPrivileged()
-		smells = append(smells, c.SmellKubernetes...)
+		smells = append(smells, c.GetKubernetesSmells()...)
 	}
 	return smells
 }

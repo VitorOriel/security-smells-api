@@ -6,13 +6,13 @@ type Meta struct {
 }
 
 type Data struct {
-	SmellsReplicaSet  []*SmellKubernetes `json:"ReplicaSet"`
-	SmellsDeployment  []*SmellKubernetes `json:"Deployment"`
-	SmellsPod         []*SmellKubernetes `json:"Pod"`
-	SmellsJob         []*SmellKubernetes `json:"Job"`
-	SmellsCronJob     []*SmellKubernetes `json:"CronJob"`
-	SmellsStatefulSet []*SmellKubernetes `json:"StatefulSet"`
-	SmellsDaemonSet   []*SmellKubernetes `json:"DaemonSet"`
+	SmellsReplicaSet  []*KubernetesSmell `json:"ReplicaSet"`
+	SmellsDeployment  []*KubernetesSmell `json:"Deployment"`
+	SmellsPod         []*KubernetesSmell `json:"Pod"`
+	SmellsJob         []*KubernetesSmell `json:"Job"`
+	SmellsCronJob     []*KubernetesSmell `json:"CronJob"`
+	SmellsStatefulSet []*KubernetesSmell `json:"StatefulSet"`
+	SmellsDaemonSet   []*KubernetesSmell `json:"DaemonSet"`
 }
 
 type SmellyResponseDTO struct {
