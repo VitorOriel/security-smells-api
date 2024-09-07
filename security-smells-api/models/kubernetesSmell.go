@@ -64,8 +64,23 @@ func (kubernetesSmell *KubernetesSmell) setMessageAndSuggestionByRule(container 
 	case constants.K8S_SEC_ROROOTFS_UNSET:
 		kubernetesSmell.Message = fmt.Sprintf("ReadOnlyRootFilesystem not set into %s your container is running with ReadWriteRootFilesystem", container.Name)
 		kubernetesSmell.Suggestion = fmt.Sprintf("Please add ReadOnlyRootFilesystem into %s to avoid running with ReadWriteRootFilesystem", container.Name)
+	case constants.K8S_SEC_PRIVESCALATION_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("AllowPrivilegeEscalation value set to true into %s container", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set the value into %s container to 'AllowPrivilegeEscalation: false'", container.Name)
+	case constants.K8S_SEC_CAPABILITIES_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("Capabilities value not set properly into %s container", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set the value into %s container to Capabilities:\n  - \"ALL\"", container.Name)
+	case constants.K8S_SEC_RUNASUSER_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("RunAsUser value set to 0 into %s container", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set the value into %s container to RunAsUser greater than zero", container.Name)
+	case constants.K8S_SEC_RUNASNONROOT_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("RunAsNonRoot value set to false into %s container", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set the value into %s container to 'RunAsNonRoot: true'", container.Name)
+	case constants.K8S_SEC_ROROOTFS_VALUE:
+		kubernetesSmell.Message = fmt.Sprintf("ReadOnlyRootFilesystem value set to false into %s container", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set the value into %s container to 'ReadOnlyRootFilesystem: true'", container.Name)
 	case constants.K8S_SEC_PRIVILEGED_VALUE:
 		kubernetesSmell.Message = fmt.Sprintf("Privileged setted to 'true' into %s your container is running with Privileged", container.Name)
-		kubernetesSmell.Suggestion = fmt.Sprintf("Please add 'privileged: false' into %s to avoid running with Privileged", container.Name)
+		kubernetesSmell.Suggestion = fmt.Sprintf("You should set 'privileged: false' into %s to avoid running with Privileged", container.Name)
 	}
 }
