@@ -1,6 +1,6 @@
 # Smelly Kube API
 
-Smelly Kube API was created to identify security vulnerabilities in Kubernetes manifests. It uses a REST API to receive the manifest files from the client, and returns a response with the found vulnerabilities. The API documentation can be seen in **API** section.
+Smelly Kube API was created to identify security smells in Kubernetes manifests. It uses a REST API to receive the manifest files from the client, and returns a response with the found smells. The API documentation can be seen in **API** section.
 
 ## Clients
 
